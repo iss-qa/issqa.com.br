@@ -1,3 +1,4 @@
+# v1.0.1 - Redesign & i18n Fix
 import os
 from datetime import datetime, timedelta
 
