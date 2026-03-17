@@ -7,6 +7,8 @@ packaging==23.0
 pipenv==2023.3.20
 pycodestyle==2.10.0
 python-dotenv==0.21.1
+PyJWT==2.8.0
+pymongo==4.6.3
 typing_extensions==4.5.0
 virtualenv==20.21.0
 Werkzeug==2.2.3

@@ -328,3 +328,67 @@ i.menu-mobile {
     padding: 20px 15px;
   }
 }
+
+.whatsapp-float {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  text-decoration: none;
+}
+
+.whatsapp-float:hover {
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Login */
+.login-page {
+  background: #0f1720;
+  color: #0f1720;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(1200px 600px at 70% -10%, rgba(37, 99, 235, 0.35), transparent 60%),
+              radial-gradient(900px 500px at 10% 110%, rgba(14, 165, 233, 0.25), transparent 55%),
+              linear-gradient(135deg, #0b1220 0%, #0f1720 60%, #111827 100%);
+  z-index: 0;
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid rgba(15, 23, 32, 0.08);
+}
+
+.login-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #0f1720;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 1px;
+}

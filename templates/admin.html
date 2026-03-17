@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../static/style.css">
+    <title>Painel Admin</title>
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3">Painel Administrativo</h1>
+            <a href="/logout" class="btn btn-outline-secondary">Sair</a>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-success">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-profile" type="button">Início</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-about" type="button">Sobre</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-skills" type="button">Habilidades</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-exp" type="button">Currículo</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-projects" type="button">Portfólio</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-messages" type="button">Contato</button>
+            </li>
+        </ul>
+
+        <div class="tab-content bg-white p-4 border border-top-0">
+            <div class="tab-pane fade show active" id="tab-profile" role="tabpanel">
+                <h4 class="mb-3">Início</h4>
+                <form method="POST" action="/admin/profile" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nome exibido</label>
+                            <input class="form-control" name="site_name" value="{{ settings.site_name }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Títulos/Cargos</label>
+                            <input class="form-control" name="site_title" value="{{ settings.site_title }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">E-mail de contato</label>
+                            <input class="form-control" name="contact_email" value="{{ settings.contact_email }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">WhatsApp (link)</label>
+                            <input class="form-control" name="whatsapp" value="{{ settings.whatsapp }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Foto de perfil</label>
+                            <input type="file" class="form-control" name="profile_image">
+                            {% if settings.profile_image %}
+                                <small class="text-muted">Atual: {{ settings.profile_image }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Imagem de fundo</label>
+                            <input type="file" class="form-control" name="background_image">
+                            {% if settings.background_image %}
+                                <small class="text-muted">Atual: {{ settings.background_image }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <button class="btn btn-primary">Salvar</button>
+                </form>
+            </div>
+
+            <div class="tab-pane fade" id="tab-about" role="tabpanel">
+                <h4 class="mb-3">Sobre</h4>
+                <form method="POST" action="/admin/about">
+                    <textarea class="form-control mb-3" name="about_content" rows="6">{{ about }}</textarea>
+                    <button class="btn btn-primary">Salvar</button>
+                </form>
+            </div>
+
+            <div class="tab-pane fade" id="tab-skills" role="tabpanel">
+                <h4 class="mb-3">Habilidades</h4>
+                <form method="POST" action="/admin/skills/add" class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <input class="form-control" name="name" placeholder="Nome da habilidade" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="level" type="number" min="1" max="100" placeholder="Nível (%)" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="icon" placeholder="Ícone (ex: bi bi-lightning)">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-success w-100">Adicionar</button>
+                    </div>
+                </form>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Nível</th>
+                            <th>Ícone</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for skill in skills %}
+                        <tr>
+                            <td>
+                                <form method="POST" action="/admin/skills/{{ skill.id }}/update" class="d-flex gap-2">
+                                    <input class="form-control form-control-sm" name="name" value="{{ skill.name }}">
+                                    <input class="form-control form-control-sm" name="level" type="number" min="1" max="100" value="{{ skill.level }}">
+                                    <input class="form-control form-control-sm" name="icon" value="{{ skill.icon }}">
+                                    <button class="btn btn-outline-primary btn-sm">Salvar</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="POST" action="/admin/skills/{{ skill.id }}/delete">
+                                    <button class="btn btn-outline-danger btn-sm">Remover</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-pane fade" id="tab-exp" role="tabpanel">
+                <h4 class="mb-3">Currículo</h4>
+                <form method="POST" action="/admin/experiences/add" class="row g-3 mb-4">
+                    <div class="col-md-2">
+                        <select class="form-select" name="kind">
+                            <option value="work">Experiência</option>
+                            <option value="education">Formação</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="company" placeholder="Empresa/Instituição" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="role" placeholder="Cargo/Curso" required>
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control" name="start_date" placeholder="Início">
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control" name="end_date" placeholder="Fim">
+                    </div>
+                    <div class="col-md-12">
+                        <textarea class="form-control" name="description" rows="2" placeholder="Descrição"></textarea>
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control" name="sort_order" placeholder="Ordem" value="0">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-success w-100">Adicionar</button>
+                    </div>
+                </form>
+
+                <h5>Experiências</h5>
+                {% for exp in experiences %}
+                <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-2 align-items-end mb-2">
+                    <div class="col-md-3">
+                        <input class="form-control form-control-sm" name="company" value="{{ exp.company }}" placeholder="Empresa">
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control form-control-sm" name="role" value="{{ exp.role }}" placeholder="Cargo">
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}" placeholder="Início">
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}" placeholder="Fim">
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" placeholder="Ordem">
+                    </div>
+                    <div class="col-md-12">
+                        <textarea class="form-control form-control-sm" name="description" rows="2" placeholder="Descrição">{{ exp.description }}</textarea>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-primary btn-sm w-100">Salvar</button>
+                    </div>
+                </form>
+                <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" class="mb-3">
+                    <button class="btn btn-outline-danger btn-sm">Remover</button>
+                </form>
+                {% endfor %}
+
+                <h5>Formação</h5>
+                {% for exp in education %}
+                <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-2 align-items-end mb-2">
+                    <div class="col-md-3">
+                        <input class="form-control form-control-sm" name="company" value="{{ exp.company }}" placeholder="Instituição">
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control form-control-sm" name="role" value="{{ exp.role }}" placeholder="Curso">
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}" placeholder="Início">
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}" placeholder="Fim">
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" placeholder="Ordem">
+                    </div>
+                    <div class="col-md-12">
+                        <textarea class="form-control form-control-sm" name="description" rows="2" placeholder="Descrição">{{ exp.description }}</textarea>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-primary btn-sm w-100">Salvar</button>
+                    </div>
+                </form>
+                <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" class="mb-3">
+                    <button class="btn btn-outline-danger btn-sm">Remover</button>
+                </form>
+                {% endfor %}
+            </div>
+
+            <div class="tab-pane fade" id="tab-projects" role="tabpanel">
+                <h4 class="mb-3">Portfólio</h4>
+                <form method="POST" action="/admin/projects/add" class="row g-3 mb-4" enctype="multipart/form-data">
+                    <div class="col-md-4">
+                        <input class="form-control" name="title" placeholder="Título" required>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" name="tech" placeholder="Tecnologias">
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" name="project_url" placeholder="Link do projeto">
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" name="repo_url" placeholder="Link do repositório">
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" name="image_url" placeholder="URL da imagem">
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" name="image_upload" type="file">
+                    </div>
+                    <div class="col-md-12">
+                        <textarea class="form-control" name="description" rows="2" placeholder="Descrição"></textarea>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-check">
+                            <input class="form-check-input" type="checkbox" name="featured">
+                            <span class="form-check-label">Destacar</span>
+                        </label>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-success w-100">Adicionar</button>
+                    </div>
+                </form>
+
+                {% for project in projects %}
+                <form method="POST" action="/admin/projects/{{ project.id }}/update" class="row g-2 align-items-end mb-2" enctype="multipart/form-data">
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" name="title" value="{{ project.title }}" placeholder="Título">
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" name="tech" value="{{ project.tech }}" placeholder="Tecnologias">
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" name="project_url" value="{{ project.project_url }}" placeholder="Link do projeto">
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" name="repo_url" value="{{ project.repo_url }}" placeholder="Link do repositório">
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" name="image_url" value="{{ project.image_url }}" placeholder="URL da imagem">
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" name="image_upload" type="file">
+                    </div>
+                    <div class="col-md-12">
+                        <textarea class="form-control form-control-sm" name="description" rows="2" placeholder="Descrição">{{ project.description }}</textarea>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-check">
+                            <input class="form-check-input" type="checkbox" name="featured" {% if project.featured %}checked{% endif %}>
+                            <span class="form-check-label">Destacar</span>
+                        </label>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-primary btn-sm w-100">Salvar</button>
+                    </div>
+                </form>
+                <form method="POST" action="/admin/projects/{{ project.id }}/delete" class="mb-3">
+                    <button class="btn btn-outline-danger btn-sm">Remover</button>
+                </form>
+                {% endfor %}
+            </div>
+
+            <div class="tab-pane fade" id="tab-messages" role="tabpanel">
+                <h4 class="mb-3">Mensagens Recebidas</h4>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Assunto</th>
+                            <th>Data</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for msg in messages %}
+                        <tr>
+                            <td>{{ msg.name }}</td>
+                            <td>{{ msg.email }}</td>
+                            <td>{{ msg.subject }}</td>
+                            <td>{{ msg.created_at }}</td>
+                            <td>
+                                <form method="POST" action="/admin/messages/{{ msg.id }}/delete">
+                                    <button class="btn btn-outline-danger btn-sm">Remover</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="text-muted">{{ msg.message }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../static/bootstrap/js/bootstrap.bundle.js"></script>
+</body>
+</html>

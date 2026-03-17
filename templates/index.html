@@ -22,8 +22,8 @@
 
     <aside id="header">
         <section class="profile">
-            <img src="../static/img/perfil.jpg" alt="Foto do Isaias">
-            <h1 data-i18n="header-title">Isaias Silva</h1>
+            <img src="{{ settings.profile_image }}" alt="Foto do Isaias">
+            <h1>{{ settings.site_name }}</h1>
             <div class="social-links mt-4 text-center">
                 <a target="_blank" href="https://www.linkedin.com/in/isaiasilva/">
                     <i class="bi bi-linkedin"></i>
@@ -73,11 +73,10 @@
 
     <main id="main">
 
-        <section id="inicio" class="row m-0 p-0">
+        <section id="inicio" class="row m-0 p-0" style="background-image: url('{{ settings.background_image }}');">
             <div class="col-md-5 d-flex justify-content-center align-items-center flex-column">
-                <h2 class="text-white text-shadow justify-content-md-center" data-i18n="header-title">Isaias Silva</h2>
-                <span id="subtitle" class="text-white text-shadow" data-i18n="header-subtitle">QA Lead, Automatizador
-                    Cypress, Empreendedor</span>
+                <h2 class="text-white text-shadow justify-content-md-center">{{ settings.site_name }}</h2>
+                <span id="subtitle" class="text-white text-shadow">{{ settings.site_title }}</span>
             </div>
 
 
@@ -95,31 +94,13 @@
             <div class="row w-100">
                 <div class="col-md-12" data-anime="down">
                     <h2 class='pt-3' data-i18n="sobre-title">Sobre</h2>
-                    <p data-i18n="sobre-p1"> Acredito que a educação pode mudar a vida das pessoas e sou prova disso.
-                        Sou formado em Sistemas
-                        de Informação e tenho mais de 8 anos de experiência em testes de software, incluindo mobile, API
-                        e web. Tenho uma paixão especial por testes automatizados e de API REST e sou muito focado e
-                        profissional em entregar software de qualidade.
-                        Para contribuir com minha comunidade, dou aulas
-                        gratuitas de fundamentos de programação para jovens. Acredito que ensinar é uma forma
-                        significativa de ajudar os outros e crescer profissionalmente. Além disso, sou casado e pai de
-                        uma garotinha de 2 anos que é minha luz do dia. Sou cristão da Igreja Batista e gosto de tocar
-                        teclado e lidero o grupo de jovens na igreja e ensino na Escola Bíblica Dominical. Ser cristão e
-                        seguidor de Jesus, é algo
-                        de Jesus, é algo que faço questão de estar em minha biografia.</p>
-
-                    <p data-i18n="sobre-p2">Adoro novas tecnologias e estou sempre me atualizando, além de QA, auto como
-                        desenvolvedor, onde
-                        entrego e mantenho pequenos softwares para clientes em minha comunidade.
-                        Sou um jovem bem-sucedido e acredito que minha jornada ainda está só começando.
-                        Ser orientador é minha vocação e espero influenciar e motivar
-                        muitas pessoas ao longo do caminho.</p>
+                    <p>{{ about|nl2br }}</p>
                 </div>
             </div>
 
             <div class="row mt-4">
                 <div class="col-md-4">
-                    <img class="img-fluid shadow" src="../static/img/isa-perfil.jpg" alt="Foto do Isaias"
+                    <img class="img-fluid shadow" src="{{ settings.profile_image }}" alt="Foto do Isaias"
                         data-anime="left">
                 </div>
                 <div class="col-md-8" data-anime="right">
@@ -179,6 +160,8 @@
         </section>
 
         <!-- Seção Habilidades -->
+        
+        <!-- Seção Habilidades -->
         <section class="mt-5 section-bg" id="habilidades">
 
             <div class="container pb-5">
@@ -190,149 +173,32 @@
 
                 <div class="row">
                     <div class="col-md-6">
-                        <p class='mt-3 mb-0' data-i18n="hab-t1">Automação de Testes [ Web, Mobile, API ]</p>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="80"
-                                data-anime="left" aria-valuemin="0" aria-valuemax="100">80%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t2">Postman/Insomnia</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 85%;"
-                                aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t3">Pipelines CI [ Jenkins, Github Actions ]</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 65%;"
-                                aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t4">Appium</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 80%;"
-                                aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t5">Linguagens de Programação [ Java, Javascript, Python,
-                            Ruby ]</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 60%;"
-                                aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">60%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t6">Git</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 78%;"
-                                aria-valuenow="78" aria-valuemin="0" aria-valuemax="100">78%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t7">Deploy</p>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 70%;"
-                                aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
-                        </div>
+                        {% for skill in skills %}
+                            {% if loop.index0 % 2 == 0 %}
+                                <p class="mt-3 mb-0">{{ skill.name }}</p>
+                                <div class="progress">
+                                    <div class="progress-bar" data-anime="left" role="progressbar"
+                                        style="width: {{ skill.level }}%;"
+                                        aria-valuenow="{{ skill.level }}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ skill.level }}%
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                     <div class="col-md-6">
-                        <p class="mt-3 mb-0" data-i18n="hab-t8">Cypress</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 80%;"
-                                aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t9">Performance Testes [ k6, jmetter ]</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 70%;"
-                                aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t10">Gherkin - BDD [ Cucumber ]</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 85%;"
-                                aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t11">Gestão e Técnicas de Testes [ Exploratório, Regressivo,
-                            Smoke, Análise valor limite ]</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 90%;"
-                                aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">90%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t12">Selenium / Selenide</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 70%;"
-                                aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t13">Liderança</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 90%;"
-                                aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">90%</div>
-                        </div>
-                        <p class="mt-3 mb-0" data-i18n="hab-t14">Banco de Dados [ Mysql, Sql Server, Postgree, MongoDB ]
-                        </p>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 75%;"
-                                aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
-                        </div>
-                    </div>
-                </div>
-
-                <hr class='w-50 me-auto ms-auto'>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <p class="mt-3 mb-0" data-i18n="hab-s1">Trabalho em equipe</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 95%;"
-                                aria-valuenow="95" aria-valuemin="0" aria-valuemax="100">95%</div>
-                        </div>
-
-                        <p class="mt-3 mb-0" data-i18n="hab-s2">Proatividade</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 98%;"
-                                aria-valuenow="98" aria-valuemin="0" aria-valuemax="100">98%</div>
-                        </div>
-
-                        <p class="mt-3 mb-0" data-i18n="hab-s3">Perfeccionista</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 80%;"
-                                aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
-                        </div>
-
-                        <p class="mt-3 mb-0" data-i18n="hab-s4">Orientação a detalhes</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 85%;"
-                                aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
-                        </div>
-
-                        <p class="mt-3 mb-0" data-i18n="hab-s5">Objetivo</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 75%;"
-                                aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <p class="mt-3 mb-0" data-i18n="hab-s6">Comunicação</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 95%;"
-                                aria-valuenow="95" aria-valuemin="0" aria-valuemax="100">95%</div>
-                        </div>
-
-                        <p class="mt-3 mb-0" data-i18n="hab-s7">Empatia</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 85%;"
-                                aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
-                        </div>
-
-                        <p class="mt-3 mb-0" data-i18n="hab-s8">Comprometimento</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 98%;"
-                                aria-valuenow="98" aria-valuemin="0" aria-valuemax="100">98%</div>
-                        </div>
-
-                        <p class="mt-3 mb-0" data-i18n="hab-s9">Organizado</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 90%;"
-                                aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">90%</div>
-                        </div>
-
-                        <p class="mt-3 mb-0" data-i18n="hab-s10">Metódico</p>
-                        <div class="progress">
-                            <div class="progress-bar" data-anime="left" role="progressbar" style="width: 91%;"
-                                aria-valuenow="91" aria-valuemin="0" aria-valuemax="100">91%</div>
-                        </div>
-
+                        {% for skill in skills %}
+                            {% if loop.index0 % 2 == 1 %}
+                                <p class="mt-3 mb-0">{{ skill.name }}</p>
+                                <div class="progress">
+                                    <div class="progress-bar" data-anime="left" role="progressbar"
+                                        style="width: {{ skill.level }}%;"
+                                        aria-valuenow="{{ skill.level }}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ skill.level }}%
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
 
@@ -347,215 +213,27 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h3 class="cv-title">Formação</h3>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f1-t">[Acadêmica] Bacharel em Sistemas de Informação</h5>
-                            <h6>2010 - 2017</h6>
-                            <p><em data-i18n="cv-f1-i">UNIME - União Metropolitana de Educação e Cultura</em></p>
-                            <p data-i18n="cv-f1-d">Monografia: Automação de Testes Funcionais no processo de FOTA em
-                                Dispositivos Móveis</p>
+                        {% for edu in education %}
+                        <div class="cv-item" data-anime="up">
+                            <h5>{{ edu.role }}</h5>
+                            <h6>{{ edu.start_date }}{% if edu.end_date %} - {{ edu.end_date }}{% endif %}</h6>
+                            <p><em>{{ edu.company }}</em></p>
+                            {% if edu.description %}<p>{{ edu.description }}</p>{% endif %}
                         </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f2-t">[Certificação] Tester Profissional Certified</h5>
-                            <h6>2014 - 2030</h6>
-                            <p><em data-i18n="cv-f2-i">ISTQB Certified Tester</em></p>
-                            <p data-i18n="cv-f2-d">14-CTFL-03441-BR-BSQTB</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f3-t">[Certificação] Scrum Foundation Professional Certification</h5>
-                            <h6>2014 - 2030</h6>
-                            <p><em data-i18n="cv-f3-i">CertiProf</em></p>
-                            <p data-i18n="cv-f3-d">Scrum Guide - SFPC - Professional Certification</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f4-t">[Certificação] DevOps Essentials Professional Certificate</h5>
-                            <h6>2014 - 2030</h6>
-                            <p><em data-i18n="cv-f4-i">DevOps Essentials - Credly.com</em></p>
-                            <p data-i18n="cv-f4-d">DevOps Essentials Professional Certificate</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f5-t">[Diploma-Curso] Cypress Discovery</h5>
-                            <h6>Data de Conclusão: Abril 2022</h6>
-                            <p><em data-i18n="cv-f5-i">Instrutor: Fernando Papito - QA Ninja</em></p>
-                            <p>Certificamos Isaias Silva, pela conclusão de todas as aulas e atividades propostas no
-                                curso: Cypress Discovery com foco em automação de testes de aplicações web em Cypress,
-                                javascript e Node.js, com carga horária de 20 horas</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f6-t">[Diploma-Curso] Testando a API da Marvel em Robot Framework</h5>
-                            <h6>Data de Conclusão: Fevereiro 2022</h6>
-                            <p><em data-i18n="cv-f6-i">Instrutor: Fernando Papito - QA Ninja</em></p>
-                            <p>Certificamos Isaias Silva, pela conclusão de todas as aulas e atividades propostas no
-                                curso: Testando a API da Marvel em Robot Framework, com carga horária de 4 horas</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f7-t">[Diploma-Curso] Testes de Microservices em Node.js e MongoDB</h5>
-                            <h6>Data de Conclusão: Novembro 2021</h6>
-                            <p><em data-i18n="cv-f7-i">Instrutor: Fernando Papito - QA Ninja</em></p>
-                            <p>Certificamos Isaias Silva, pela conclusão de todas as aulas e atividades propostas no
-                                curso:Testes de Microservices em Node.js e MongoDB, com carga horária de 16 horas</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f8-t">[Diploma-Curso] Testes automatizados de API com HTTParty+Rspec+Ruby
-                            </h5>
-                            <h6>Data de Conclusão: Abril 2019</h6>
-                            <p><em data-i18n="cv-f8-i">Instrutor: Bruno Batista - Udemy</em></p>
-                            <p>Certificamos Isaias Silva, pela conclusão de todas as aulas e atividades propostas no
-                                curso: Testes automatizados de API com HTTParty+Rspec+Ruby, com carga horária de 4,5
-                                horas</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f9-t">[Diploma-Curso] Automação de Testes com Robot Framework Web+API -
-                                Básico</h5>
-                            <h6>Data de Conclusão: Janeiro 2019</h6>
-                            <p><em data-i18n="cv-f9-i">Instrutor: Mayara Fernandes - Udemy</em></p>
-                            <p>Certificamos Isaias Silva, pela conclusão de todas as aulas e atividades propostas no
-                                curso: Automação de Testes com Robot Framework Web+API - Básico, com carga horária de 7
-                                horas</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f10-t">[Diploma-Curso] Automação de Testes com Capybara, Cucumber e Ruby
-                            </h5>
-                            <h6>Data de Conclusão: Julho 2018</h6>
-                            <p><em data-i18n="cv-f10-i">Instrutor: Bruno Batista - Udemy</em></p>
-                            <p>Certificamos Isaias Silva, pela conclusão de todas as aulas e atividades propostas no
-                                curso: Automação de Testes com Capybara, Cucumber e Ruby, com carga horária de 10 horas
-                            </p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f11-t">[Diploma-Curso] Aprenda BDD com Cucumber e Java</h5>
-                            <h6>Data de Conclusão: Julho 2018</h6>
-                            <p><em data-i18n="cv-f11-i">Instrutor: Francisco Wagner Aquino - Udemy</em></p>
-                            <p>Certificamos Isaias Silva, pela conclusão de todas as aulas e atividades propostas no
-                                curso: Aprenda BDD com Cucumber e Java, com carga horária de 10 horas</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-f12-t">[Diploma-Curso] Automação de testes de API com Postman + Projeto de
-                                testes</h5>
-                            <h6>Data de Conclusão: Março 2023</h6>
-                            <p><em data-i18n="cv-f12-i">Instrutor: Erick Valentim - Udemy</em></p>
-                            <p>Certificamos Isaias Silva, pela conclusão de todas as aulas e atividades propostas no
-                                curso: Automação de testes de API com Postman + Projeto de testes, com carga horária de
-                                10 horas</p>
-                        </div>
-
+                        {% endfor %}
                     </div>
 
                     <div class="col-md-6">
-                        <h3 class="cv-title">Profissional</h3>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p1-t">Analista de Automação Web (Cypress) </h5>
-                            <h6>09.2022 - Atual</h6>
-                            <p><em data-i18n="cv-p1-i">Foxbit Exchange</em></p>
-                            <p>A Foxbit é uma corretora brasileira de Bitcoin e outras criptomoedas. Ela faz a
-                                intermediação de compra e venda de moedas digitais, com saques e depósitos em Reais e
-                                criptomoedas. Atua no mercado financeiro brasileiro desde 2014</p>
+                        <h3 class="cv-title">Experiência Profissional</h3>
+                        {% for exp in experiences %}
+                        <div class="cv-item" data-anime="up">
+                            <h5>{{ exp.role }}</h5>
+                            <h6>{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% endif %}</h6>
+                            <p><em>{{ exp.company }}</em></p>
+                            {% if exp.description %}<p>{{ exp.description }}</p>{% endif %}
                         </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p2-t">Analista de Testes Sr</h5>
-                            <h6>08.2021 - 03.2023</h6>
-                            <p><em data-i18n="cv-p2-i">Sinergia Studios</em></p>
-                            <p>Startup de desenvolvimento de aplicativos e games. Atuei para implantar o setor de
-                                qualidade na organização, refizemos o GoGame 2.0 do zero e lançamos no mercado o GoGame
-                                3.0. Sendo o QA responsável por todo fluxo de vida e qualidade do aplicativo.
-                                Automatizado através do Appium e TestProject e Robot Framework. Uso constante do Jira e
-                                de testes manuais no aplicativo. Para mais informações, https://gogameapp.com.br/</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p3-t">Consultor - Analista de API Testes Sr</h5>
-                            <h6>09.2022 - 02.2023</h6>
-                            <p><em data-i18n="cv-p3-i">FagronTech Brasil</em></p>
-                            <p>Phusion é um ERP Online para facilitar e potencializar o desempenho da farmácia de
-                                manipulação. Neste projeto atuei como o QA Lead, realizando testes de integração de
-                                forma manual e automatizada nos novos incrementos realizados pela squad na aplicação.
-                                Usei bastante o Postman, Newman e Swagger. Implementei teste de performance com a
-                                ferramenta K6 e acompanhamento de rotas e da aplicação através de mensageria com
-                                rabbitMQ, usamos bastante pipelines em staging e acompanhamento do deploy em produção.
-                                Para mais informações, https://www.pharmaphusion.com.br/</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p4-t">Consultor - Analista de Testes Sr</h5>
-                            <h6>09.2021 - 09.2022</h6>
-                            <p><em data-i18n="cv-p4-i">Deal Technologies</em></p>
-                            <p>Consultoria de tecnologia da informação e transformação digital. Alocado em projetos no
-                                ramo de fidelidade e fidelização de clientes. Atuei em dois projetos, o Compra Agora,
-                                https://www.compra-agora.com/ e o marktplace da LTM Fidelidade,
-                                https://ltmfidelidade.com.br/, ambos projetos com forte atuação de testes de API REST,
-                                portanto o Postman, Newman e Automação de APIs com Cypress foram as principais
-                                ferramentas para realização dos testes. utilizamos as tecnologias da microsoft como
-                                Azure DevOps. Para mais informações, verifique os links acima </p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p5-t">Analista de Testes Pleno </h5>
-                            <h6>12.2020 - 08.2021</h6>
-                            <p><em data-i18n="cv-p5-i">Auto Avaliar</em></p>
-                            <p>Plataforma de compra e venda de veículos. Montei junto com um consultor um framework de
-                                automação web, desenvolvi testes automatizados. Utilizado Selenium e Selenide, bem como
-                                integração contínua com com Jenkins e relatórios personalizados de ponta a ponta, o
-                                aplicativo de avaliação de carros foi automatizado com o uso do appium e cucumber. Para
-                                mais informações, https://autoavaliar.com.br/.
-                            </p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p6-t">Analista de Testes Pleno </h5>
-                            <h6>09.2020 - 12.2020</h6>
-                            <p><em data-i18n="cv-p6-i">Capgemini Brasil </em></p>
-                            <p>Atuei por um curto período automatizando um banner no aplicativo do banco Bradesco.
-                                Framework próprio do banco. Desenvolvi, Testes de API, mapa Mental e automação Mobile
-                                (Appium+Java). As Ferramentas/Tecnologias utilizadas foram JIRA, ALM Octane, Microsoft
-                                Cloud, Teams, Confluence, Mobile Center, JAVA, Appium, Selenium, Bamboo, Bitbucket
-                            </p>
-                        </div>
-
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p7-t">Analista de Testes Pleno</h5>
-                            <h6>07.2019 - 09.2020</h6>
-                            <p><em data-i18n="cv-p7-i">Pixeon Medical System</em></p>
-                            <p>Pixeon é um Health Tech, que possui diversas soluções para clínicas e hospitais. Atuei em
-                                diversos projetos da organização, sendo prioritariamente a realização de testes manuais
-                                de correções de chamados e automação do smartweb – aplicação web de entrega de
-                                resultados de exames. Selenium, Java, Jira foram as principais tecnologias/ferramentas
-                                utilizadas.</p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p8-t">Analista de Testes Jr </h5>
-                            <h6>09.2017 - 06.2019</h6>
-                            <p><em data-i18n="cv-p8-i">Fraunhofer Project Center</em></p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p9-t">Analista de Testes Jr </h5>
-                            <h6>02.2014 - 10.2017</h6>
-                            <p><em data-i18n="cv-p9-i">Brisa P&D - LG Mobile</em></p>
-                        </div>
-
-                        <div class='cv-item' data-anime="up">
-                            <h5 data-i18n="cv-p10-t">Estagiário Testador de IDE Maker </h5>
-                            <h6>12.2012 - 01.2014</h6>
-                            <p><em data-i18n="cv-p10-i">Brisa P&D - LG Mobile</em></p>
-                        </div>
-
+                        {% endfor %}
                     </div>
-
                 </div>
             </div>
         </section>
@@ -565,191 +243,34 @@
             <div class="container pb-5 pt-5" data-anime="left">
                 <h2 class="pb-4" data-i18n="port-title">Portfólio</h2>
 
-                <div id="carouselPortfolio" class="carousel carousel-dark slide" data-bs-ride="carousel">
-
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselPortfolio" data-bs-slide-to="0" class="active"
-                            aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselPortfolio" data-bs-slide-to="1"
-                            aria-label="Slide 2"></button>
-                    </div>
-
-                    <div class="carousel-inner">
-
-                        <div class="carousel-item active" data-bs-interval="10000">
-
-                            <div class="row row-cols-1 row-cols-md-3 g-4">
-
-                                <div class="col">
-                                    <div class="card">
-                                        <img src="../static/img/foxbitTerminalTrade.png"
-                                            class="card-img-top img-fluid w-100" alt="Foxbit Terminal Trade">
-                                        <div class="card-body">
-                                            <h5 class="card-title" data-i18n="port-1-t">Terminal - Foxbit Exchange</h5>
-                                            <p class="card-text" data-i18n="port-1-d">Projeto Privado da Foxbit, permite
-                                                clientes da mesma
-                                                comprar e vender Bitcoins. como QA do time, fui responsável pelas
-                                                verificações e validações, garantindo assim através de testes manuais e
-                                                automatizados a qualidade e o sucesso do terminal. Usando Cypress e
-                                                Javascript, com pipeline montada no GitHub Actions, hoje permite o
-                                                monitoramento e manutenção da aplicação</p>
-                                            <div class="d-flex justify-content-center">
-                                                <a href="https://app.foxbit.com.br/terminal/btcbrl" target='_blank'
-                                                    class="btn btn-outline-primary"><i class="bi bi-link-45deg"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="card">
-                                        <img src="../static/img/gogameapp.png" class="card-img-top img-fluid w-100"
-                                            alt="Gogame 3.0">
-                                        <div class="card-body">
-                                            <h5 class="card-title" data-i18n="port-2-t">Gogame App - Hub de Conexão de
-                                                Jogadores</h5>
-                                            <p class="card-text" data-i18n="port-2-d">GoGame é o app que te permite
-                                                encontrar jogadores com
-                                                os mesmos jogos e interesses que você, trocar dicas e combinar partidas
-                                                online. Seja qual for a plataforma ou seu jogo favorito, a diversão
-                                                começa aqui!. Neste projeto realizei testes manuais, automatizados e de
-                                                API Rest, inclusive
-                                                automatizado a API do GoGame com Robot Framework</p>
-                                            <div class="d-flex justify-content-center">
-                                                <a href="https://play.google.com/store/apps/details?id=gogamesinergiastudios.com.br.gogame&hl=pt_BR&gl=US"
-                                                    target='_blank' class="btn btn-outline-dark me-3"><i
-                                                        class="bi bi-google-play"></i></a>
-                                                <a href="https://gogameapp.com.br/" target='_blank'
-                                                    class="btn btn-outline-primary"> <i
-                                                        class="bi bi-link-45deg"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="card">
-                                        <img src="../static/img/phusion_farmacia.png"
-                                            class="card-img-top img-fluid w-100" alt="print do blog">
-                                        <div class="card-body">
-                                            <h5 class="card-title" data-i18n="port-3-t">Phusion Farmácia de Manipulação
-                                            </h5>
-                                            <p class="card-text" data-i18n="port-3-d">O Phusion é um ERP Online para
-                                                facilitar e
-                                                potencializar o desempenho da farmácia magistral. Como QA, atuei na
-                                                realização de testes manuais e automatizados nas API Rest com Postman e
-                                                Newman, visando a garantia
-                                                da qualidade e das entregas quinzenais realizadas pela squad. Também
-                                                realizei teste de performance com K6 nas principais rotas da API.
-                                                <br><br>
-                                            </p>
-                                            <div class="d-flex justify-content-center">
-                                                <a href="https://renatogroffe.medium.com/automatizando-testes-de-apis-rest-com-postman-newman-a90f0d90df09"
-                                                    target='_blank' class="btn btn-outline-dark me-3"><i
-                                                        class="bi bi-file-earmark-post"></i></a>
-                                                <a href="https://www.pharmaphusion.com.br/#!/login" target='_blank'
-                                                    class="btn btn-outline-primary"><i class="bi bi-link-45deg"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="carousel-item" data-bs-interval="2000">
-                            <div class="row row-cols-1 row-cols-md-3 g-4">
-
-                                <div class="col">
-                                    <div class="card h-100">
-                                        <img src="../static/img/compraAgora.png" class="card-img-top img-fluid w-100"
-                                            alt="print do blog">
-                                        <div class="card-body">
-                                            <h5 class="card-title" data-i18n="port-4-t">Compra Agora/Viveo / LTM
-                                                Fidelidade</h5>
-                                            <p class="card-text" data-i18n="port-4-d">Mais de metade dos consumidores
-                                                brasileiros preferem
-                                                realizar compras de marcas que oferecem um programa de fidelidade. Como
-                                                QA, atuei nos diversos projetos de fidelidade relizando testes manuais e
-                                                testes de API Rest, visando a garantia da qualidade do produto. Em
-                                                alguns projetos também realizei testes automatizados com Cypress</p>
-                                            <div class="d-flex justify-content-center">
-                                                <a href="https://ltmfidelidade.com.br/fidelidade/" target='_blank'
-                                                    class="btn btn-outline-dark me-3"><i
-                                                        class="bi bi-bookmark-star"></i></a>
-                                                <a href="https://www.compra-agora.com/" target='_blank'
-                                                    class="btn btn-outline-primary"><i class="bi bi-link-45deg"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="card h-100">
-                                        <img src="../static/img/autoavaliar.png" class="card-img-top img-fluid w-100"
-                                            alt="print do blog">
-                                        <div class="card-body">
-                                            <h5 class="card-title" data-i18n="port-5-t">Auto Avaliar Web e Mobile</h5>
-                                            <p class="card-text" data-i18n="port-5-d">A plataforma Auto Avaliar funciona
-                                                de forma totalmente
-                                                automatizada e integrada desde a identificação, avaliação e cotação do
-                                                veículo usado. Como QA realizei testes manuais e automatizados nas
-                                                principais ferramentas da organização e junto a um consultor montamos e
-                                                automatizamos o applicativo mobile da auto avaliar. Utilizamos Java,
-                                                Selenium, Jenkins, e Appium</p>
-                                            <div class="d-flex justify-content-center">
-                                                <a href="https://play.google.com/store/apps/details?id=com.autoaction.app&hl=pt_BR&gl=US"
-                                                    target='_blank' class="btn btn-outline-dark me-3"><i
-                                                        class="bi bi-google-play"></i></a>
-                                                <a href="https://autoavaliar.com.br/" target='_blank'
-                                                    class="btn btn-outline-primary"><i class="bi bi-car-front"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="card h-100">
-                                        <img src="../static/img/pixeon.png" class="card-img-top img-fluid w-100"
-                                            alt="print do blog">
-                                        <div class="card-body">
-                                            <h5 class="card-title" data-i18n="port-6-t">Pixeon Health Tech</h5>
-                                            <p class="card-text" data-i18n="port-6-d">A Pixeon é uma importante player
-                                                no desenvolvimento de
-                                                sistemas de gestão para a saúde (hospitais, clinicas e laboratórios), e
-                                                oferece soluções completas para
-                                                suportar todas as etapas da prestação de serviços. Como QA, atuei na
-                                                validação e verificação do sistema SMART e do sistema de entrega de
-                                                resultados Smartweb. Utilizando testes manuais e testes automatizados
-                                                com Selenium, Selenide e Java</p>
-                                            <div class="d-flex justify-content-center">
-                                                <a href="https://www.pixeon.com/sistema/laboratorio/" target='_blank'
-                                                    class="btn btn-outline-dark me-3"><i class="bi bi-link"></i></a>
-                                                <a href="https://www.pixeon.com/" target='_blank'
-                                                    class="btn btn-outline-primary"><i class="bi bi-bandaid"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for project in projects %}
+                    <div class="col">
+                        <div class="card h-100">
+                            {% if project.image_url %}
+                                <img src="{{ project.image_url }}" class="card-img-top img-fluid w-100" alt="{{ project.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ project.title }}</h5>
+                                {% if project.description %}<p class="card-text">{{ project.description }}</p>{% endif %}
+                                {% if project.tech %}<p class="text-muted">{{ project.tech }}</p>{% endif %}
+                                <div class="d-flex justify-content-center gap-2">
+                                    {% if project.project_url %}
+                                        <a href="{{ project.project_url }}" target='_blank' class="btn btn-outline-primary"><i class="bi bi-link-45deg"></i></a>
+                                    {% endif %}
+                                    {% if project.repo_url %}
+                                        <a href="{{ project.repo_url }}" target='_blank' class="btn btn-outline-dark"><i class="bi bi-github"></i></a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselPortfolio"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselPortfolio"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
+                    {% endfor %}
                 </div>
             </div>
-
         </section>
 
-        <!-- Seção Contato -->
+<!-- Seção Contato -->
         <section class="pt-5 pb-5" id="contato">
 
             <div class="container mb-5">
@@ -766,7 +287,7 @@
 
                             <div class="email">
                                 <h4><i class="bi bi-envelope"></i> Email:</h4>
-                                <p>qa.eng.isaiasilva@gmail.com</p>
+                                <p>{{ settings.contact_email }}</p>
                             </div>
 
                             <iframe
@@ -792,6 +313,12 @@
                                 </div>
 
                                 <div class="col-12">
+                                    <label for="assunto" class="form-label">Assunto:</label>
+                                    <input type="text" class="form-control" id="assunto" name="assunto"
+                                        placeholder="Digite o assunto">
+                                </div>
+
+                                <div class="col-12">
                                     <label for="mensagem" class="form-label"
                                         data-i18n="contact-form-msg">Mensagem:</label>
                                     <textarea type="text" class="form-control" id="mensagem" name='mensagem' rows="10"
@@ -800,11 +327,15 @@
                                 </div>
 
 
-                                <div class="col-12 d-flex justify-content-center mt-4">
+                                <div class="col-12 d-flex justify-content-center mt-4 gap-2">
                                     <button id='btn-enviar' type="submit" class="btn btn-primary"
                                         data-i18n="contact-form-btn">
                                         Enviar Mensagem
                                     </button>
+
+                                    <a class="btn btn-success" href="{{ settings.whatsapp }}" target="_blank">
+                                        <i class="bi bi-whatsapp"></i> WhatsApp
+                                    </a>
 
                                     <button id='btn-enviar-loader' class="btn btn-primary" type="button" disabled>
                                         <span class="spinner-border spinner-border-sm" role="status"
@@ -833,6 +364,10 @@
         {% endwith %}
 
     </main>
+
+    <a class="whatsapp-float" href="{{ settings.whatsapp }}" target="_blank" aria-label="WhatsApp">
+        <i class="bi bi-whatsapp"></i>
+    </a>
 
     <footer id="footer">
         <div class="container">

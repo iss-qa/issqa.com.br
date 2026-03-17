@@ -38,3 +38,42 @@ npx playwright test
 ```
 
 Os testes estão localizados na pasta `tests/`.
+
+## Banco e Admin (MongoDB)
+
+### Variáveis de ambiente
+- `SECRET_KEY`
+- `EMAIL` (SMTP)
+- `SENHA` (SMTP)
+- `MONGO_URI` (ex: `mongodb://localhost:27017`)
+- `MONGO_DB` (ex: `portfolio_cv`)
+
+### Seed/reset do banco
+```bash
+python3 scripts/seed_db.py --reset --samples
+```
+
+### Export/backup do conteúdo do admin
+```bash
+python3 scripts/export_db.py
+```
+
+### Criar usuário admin manualmente
+```bash
+python3 scripts/create_user.py --username "qa.eng.isaiasilva@gmail.com" --password "Is@i@s1989"
+```
+
+### Importar dados do site em produção (skills/currículo/portfólio)
+```bash
+python3 scripts/import_from_site.py --reset
+```
+
+## Produção com MongoDB Atlas
+1. Crie um cluster no Atlas e um usuário de banco.
+2. Copie a connection string e configure:
+   - `MONGO_URI=mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority`
+   - `MONGO_DB=<db>`
+3. No Vercel, adicione essas variáveis em `Project Settings -> Environment Variables`.
+
+
+lsof -ti :5000 | xargs kill -9
