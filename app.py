@@ -47,7 +47,10 @@ mail = Mail(app)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+try:
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+except Exception as e:
+    print(f"Erro ao criar diretório de uploads (comum em Vercel/Serverless): {e}")
 
 
 def nl2br(value):
@@ -133,7 +136,10 @@ def init_app_data():
     )
 
 
-init_app_data()
+try:
+    init_app_data()
+except Exception as e:
+    print(f"Erro ao inicializar dados do app (provável timeout no MongoDB): {e}")
 
 
 @app.route("/")

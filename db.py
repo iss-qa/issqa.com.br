@@ -3,13 +3,15 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 from pymongo import MongoClient, ASCENDING
+import certifi
+ca = certifi.where()
 
 load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 MONGO_DB = os.getenv("MONGO_DB", "portfolio_cv")
 
-_client = MongoClient(MONGO_URI)
+_client = MongoClient(MONGO_URI, tlsCAFile=ca, serverSelectionTimeoutMS=5000)
 _db = _client[MONGO_DB]
 
 

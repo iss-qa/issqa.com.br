@@ -10,6 +10,7 @@ python-dotenv==0.21.1
 PyJWT==2.8.0
 pymongo==4.6.3
 dnspython==2.3.0
+certifi
 typing_extensions==4.5.0
 virtualenv==20.21.0
 Werkzeug==2.2.3
