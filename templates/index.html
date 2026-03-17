@@ -59,6 +59,10 @@
                             class="bi bi-file-earmark-text"></i> <span data-i18n="menu-curriculo">Curriculo</span></a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="#formacao"> <i class="bi bi-mortarboard"></i> <span
+                            data-i18n="menu-formacao">Formação</span></a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#portfolio"> <i class="bi bi-collection"></i> <span
                             data-i18n="menu-portfolio">Portfólio</span></a>
                 </li>
@@ -211,19 +215,7 @@
             <div class="container pb-5">
                 <h2 class="pt-3 pb-4">Currículo</h2>
                 <div class="row">
-                    <div class="col-md-6">
-                        <h3 class="cv-title">Formação</h3>
-                        {% for edu in education %}
-                        <div class="cv-item" data-anime="up">
-                            <h5>{{ edu.role }}</h5>
-                            <h6>{{ edu.start_date }}{% if edu.end_date %} - {{ edu.end_date }}{% endif %}</h6>
-                            <p><em>{{ edu.company }}</em></p>
-                            {% if edu.description %}<p>{{ edu.description }}</p>{% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <h3 class="cv-title">Experiência Profissional</h3>
                         {% for exp in experiences %}
                         <div class="cv-item" data-anime="up">
@@ -231,6 +223,25 @@
                             <h6>{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% endif %}</h6>
                             <p><em>{{ exp.company }}</em></p>
                             {% if exp.description %}<p>{{ exp.description }}</p>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção Formação -->
+        <section class="mt-5 cv section-bg" id="formacao">
+            <div class="container pb-5">
+                <h2 class="pt-3 pb-4" data-i18n="menu-formacao">Formação</h2>
+                <div class="row">
+                    <div class="col-md-12">
+                        {% for edu in education %}
+                        <div class="cv-item" data-anime="up">
+                            <h5>{{ edu.role }}</h5>
+                            <h6>{{ edu.start_date }}{% if edu.end_date %} - {{ edu.end_date }}{% endif %}</h6>
+                            <p><em>{{ edu.company }}</em></p>
+                            {% if edu.description %}<p>{{ edu.description }}</p>{% endif %}
                         </div>
                         {% endfor %}
                     </div>

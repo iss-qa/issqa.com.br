@@ -115,7 +115,7 @@ def init_app_data():
         {
             "site_name": "Isaias Silva",
             "site_title": "QA Lead, Automatizador Cypress, Empreendedor",
-            "profile_image": "/static/img/perfil.jpg",
+            "profile_image": "/static/img/isa-perfil.jpg",
             "background_image": "/static/img/bannerPortifolio.png",
             "contact_email": "qa.eng.isaiasilva@gmail.com",
             "whatsapp": "https://wa.me/5571996838735",

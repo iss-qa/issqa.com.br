@@ -5,6 +5,7 @@ const translations = {
         "menu-sobre": "Sobre",
         "menu-habilidades": "Habilidades",
         "menu-curriculo": "Curriculo",
+        "menu-formacao": "Formação",
         "menu-portfolio": "Portfólio",
         "menu-contato": "Contato",
 
@@ -166,6 +167,7 @@ const translations = {
         "menu-sobre": "About",
         "menu-habilidades": "Skills",
         "menu-curriculo": "Resume",
+        "menu-formacao": "Education",
         "menu-portfolio": "Portfolio",
         "menu-contato": "Contact",
 
