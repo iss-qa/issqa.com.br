@@ -9,10 +9,25 @@ ca = certifi.where()
 
 load_dotenv()
 
+from urllib.parse import quote_plus, unquote
+
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 MONGO_DB = os.getenv("MONGO_DB", "portfolio_cv")
 
-# Use MONGO_URI directly from env. Pymongo handles SRV URIs correctly.
+# Robusto para Vercel: Garante que caracteres especiais (@, :, etc) na senha sejam codificados apenas uma vez
+if "://" in MONGO_URI and "@" in MONGO_URI:
+    try:
+        protocol, rest = MONGO_URI.split("://", 1)
+        creds, cluster = rest.rsplit("@", 1)
+        if ":" in creds:
+            user, password = creds.split(":", 1)
+            # Unquote seguido de quote_plus resolve tanto senhas cruas quanto já codificadas (evita double-encoding)
+            safe_user = quote_plus(unquote(user))
+            safe_password = quote_plus(unquote(password))
+            MONGO_URI = f"{protocol}://{safe_user}:{safe_password}@{cluster}"
+    except Exception as e:
+        print(f"Erro ao tratar MONGO_URI: {e}")
+
 _client = MongoClient(MONGO_URI, tlsCAFile=ca, serverSelectionTimeoutMS=5000)
 _db = _client[MONGO_DB]
 
