@@ -160,17 +160,25 @@ except Exception as e:
 @app.route("/")
 def index():
     db = get_db()
-    about_doc = db.about.find_one(sort=[("_id", -1)])
-    skills = normalize_list(db.skills.find().sort([("sort_order", -1), ("_id", -1)]))
-    experiences = normalize_list(
-        db.experiences.find({"kind": "work"}).sort([("sort_order", -1), ("_id", -1)])
-    )
-    education = normalize_list(
-        db.experiences.find({"kind": "education"}).sort([("sort_order", -1), ("_id", -1)])
-    )
-    projects = normalize_list(
-        db.projects.find().sort([("featured", -1), ("_id", -1)])
-    )
+    try:
+        about_doc = db.about.find_one(sort=[("_id", -1)])
+        skills = normalize_list(db.skills.find().sort([("sort_order", -1), ("_id", -1)]))
+        experiences = normalize_list(
+            db.experiences.find({"kind": "work"}).sort([("sort_order", -1), ("_id", -1)])
+        )
+        education = normalize_list(
+            db.experiences.find({"kind": "education"}).sort([("sort_order", -1), ("_id", -1)])
+        )
+        projects = normalize_list(
+            db.projects.find().sort([("featured", -1), ("_id", -1)])
+        )
+    except Exception as e:
+        print(f"Erro ao buscar dados do banco: {e}")
+        about_doc = None
+        skills = []
+        experiences = []
+        education = []
+        projects = []
 
     settings = {
         "site_name": get_setting("site_name", "Isaias Silva"),
