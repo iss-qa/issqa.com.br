@@ -5,7 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="../static/style.css">
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <title>Painel Admin</title>
+    <style>
+        .ql-editor {
+            min-height: 200px;
+            font-size: 16px;
+        }
+        .nav-tabs .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+            border-bottom: 3px solid #0d6efd;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <div class="container py-4">
@@ -23,29 +42,36 @@
         {% endwith %}
 
         <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item" role="presentation">
+            <li class="nav-item">
                 <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-profile" type="button">Início</button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-about" type="button">Sobre</button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-emp" type="button">Empreendedor</button>
+            </li>
+            <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-skills" type="button">Habilidades</button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-exp" type="button">Currículo</button>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-exp" type="button">Experiências</button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-edu" type="button">Formação</button>
+            </li>
+            <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-projects" type="button">Portfólio</button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-messages" type="button">Contato</button>
             </li>
         </ul>
 
-        <div class="tab-content bg-white p-4 border border-top-0">
+        <div class="tab-content bg-white p-4 border border-top-0 shadow-sm rounded-bottom">
+            <!-- INÍCIO -->
             <div class="tab-pane fade show active" id="tab-profile" role="tabpanel">
-                <h4 class="mb-3">Início</h4>
+                <h4 class="mb-4">Configurações Gerais</h4>
                 <form method="POST" action="/admin/profile" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -79,267 +105,472 @@
                             {% endif %}
                         </div>
                     </div>
-                    <button class="btn btn-primary">Salvar</button>
+                    <button class="btn btn-primary px-4 mt-2">Salvar Alterações</button>
                 </form>
             </div>
 
+            <!-- SOBRE -->
             <div class="tab-pane fade" id="tab-about" role="tabpanel">
-                <h4 class="mb-3">Sobre</h4>
-                <form method="POST" action="/admin/about">
-                    <textarea class="form-control mb-3" name="about_content" rows="6">{{ about }}</textarea>
-                    <button class="btn btn-primary">Salvar</button>
+                <h4 class="mb-4">Editar Seção Sobre</h4>
+                <form method="POST" action="/admin/about" id="form-about">
+                    <div class="mb-3">
+                        <div id="editor-about" class="bg-white"></div>
+                        <textarea name="about_content" id="textarea-about" style="display:none">{{ about }}</textarea>
+                    </div>
+                    <button class="btn btn-primary px-4">Salvar</button>
                 </form>
             </div>
 
+            <!-- EMPREENDEDOR -->
+            <div class="tab-pane fade" id="tab-emp" role="tabpanel">
+                <h4 class="mb-4">Editar Seção Empreendedor</h4>
+                <form method="POST" action="/admin/entrepreneur" id="form-emp">
+                    <div class="row g-3">
+                        <div class="col-md-12 mb-2">
+                            <label class="form-label">Título da Seção</label>
+                            <input class="form-control" name="emp_title" value="{{ settings.emp_title }}">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Texto de introdução (p1)</label>
+                            <div id="editor-emp-desc1" class="bg-white"></div>
+                            <textarea name="emp_desc1" id="textarea-emp-desc1" style="display:none">{{ settings.emp_desc1 }}</textarea>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Texto final (p2)</label>
+                            <div id="editor-emp-desc2" class="bg-white"></div>
+                            <textarea name="emp_desc2" id="textarea-emp-desc2" style="display:none">{{ settings.emp_desc2 }}</textarea>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label">Aniversário</label>
+                            <input class="form-control" name="emp_niver" value="{{ settings.emp_niver }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Idade</label>
+                            <input class="form-control" name="emp_idade" value="{{ settings.emp_idade }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Cidade</label>
+                            <input class="form-control" name="emp_cidade" value="{{ settings.emp_cidade }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Estado</label>
+                            <input class="form-control" name="emp_estado" value="{{ settings.emp_estado }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Hobby</label>
+                            <input class="form-control" name="emp_hobby" value="{{ settings.emp_hobby }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Experiência</label>
+                            <input class="form-control" name="emp_xp" value="{{ settings.emp_xp }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Site (exibição)</label>
+                            <input class="form-control" name="emp_site" value="{{ settings.emp_site }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Site (URL)</label>
+                            <input class="form-control" name="emp_site_url" value="{{ settings.emp_site_url }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Trabalho (exibição)</label>
+                            <input class="form-control" name="emp_trabalho" value="{{ settings.emp_trabalho }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Trabalho (URL)</label>
+                            <input class="form-control" name="emp_trabalho_url" value="{{ settings.emp_trabalho_url }}">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-4 px-4">Salvar Seção</button>
+                </form>
+            </div>
+
+            <!-- HABILIDADES -->
             <div class="tab-pane fade" id="tab-skills" role="tabpanel">
-                <h4 class="mb-3">Habilidades</h4>
-                <form method="POST" action="/admin/skills/add" class="row g-3 mb-4">
+                <h4 class="mb-4">Habilidades</h4>
+                <form method="POST" action="/admin/skills/add" class="row g-3 mb-4 p-3 bg-light rounded border">
                     <div class="col-md-4">
-                        <input class="form-control" name="name" placeholder="Nome da habilidade" required>
+                        <label class="form-label">Nome</label>
+                        <input class="form-control" name="name" placeholder="Ex: Playwright" required>
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" name="level" type="number" min="1" max="100" placeholder="Nível (%)" required>
+                        <label class="form-label">Nível (%)</label>
+                        <input class="form-control" name="level" type="number" min="1" max="100" placeholder="95" required>
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" name="icon" placeholder="Ícone (ex: bi bi-lightning)">
+                        <label class="form-label">Ícone</label>
+                        <input class="form-control" name="icon" placeholder="Ex: bi bi-check-circle">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 d-flex align-items-end">
                         <button class="btn btn-success w-100">Adicionar</button>
                     </div>
                 </form>
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Nível</th>
-                            <th>Ícone</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for skill in skills %}
-                        <tr>
-                            <td>
-                                <form method="POST" action="/admin/skills/{{ skill.id }}/update" class="d-flex gap-2">
-                                    <input class="form-control form-control-sm" name="name" value="{{ skill.name }}">
-                                    <input class="form-control form-control-sm" name="level" type="number" min="1" max="100" value="{{ skill.level }}">
-                                    <input class="form-control form-control-sm" name="icon" value="{{ skill.icon }}">
-                                    <button class="btn btn-outline-primary btn-sm">Salvar</button>
-                                </form>
-                            </td>
-                            <td>
-                                <form method="POST" action="/admin/skills/{{ skill.id }}/delete">
-                                    <button class="btn btn-outline-danger btn-sm">Remover</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Dados da Habilidade</th>
+                                <th width="100">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for skill in skills %}
+                            <tr>
+                                <td>
+                                    <form method="POST" action="/admin/skills/{{ skill.id }}/update" class="row g-2">
+                                        <div class="col-md-5">
+                                            <input class="form-control form-control-sm" name="name" value="{{ skill.name }}">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input class="form-control form-control-sm" name="level" type="number" min="1" max="100" value="{{ skill.level }}">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input class="form-control form-control-sm" name="icon" value="{{ skill.icon }}">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-outline-primary btn-sm w-100">Salvar</button>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form method="POST" action="/admin/skills/{{ skill.id }}/delete" onsubmit="return confirm('Tem certeza que deseja remover esta habilidade?')">
+                                        <button class="btn btn-outline-danger btn-sm w-100">Remover</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
+            <!-- EXPERIÊNCIAS -->
             <div class="tab-pane fade" id="tab-exp" role="tabpanel">
-                <h4 class="mb-3">Currículo</h4>
-                <form method="POST" action="/admin/experiences/add" class="row g-3 mb-4">
-                    <div class="col-md-2">
-                        <select class="form-select" name="kind">
-                            <option value="work">Experiência</option>
-                            <option value="education">Formação</option>
-                        </select>
+                <h4 class="mb-4">Experiência Profissional</h4>
+                <form method="POST" action="/admin/experiences/add" class="row g-3 mb-5 p-3 bg-light rounded border shadow-sm">
+                    <input type="hidden" name="kind" value="work">
+                    <div class="col-md-4">
+                        <label class="form-label">Empresa</label>
+                        <input class="form-control" name="company" placeholder="Ex: Foxbit" required>
                     </div>
-                    <div class="col-md-3">
-                        <input class="form-control" name="company" placeholder="Empresa/Instituição" required>
-                    </div>
-                    <div class="col-md-3">
-                        <input class="form-control" name="role" placeholder="Cargo/Curso" required>
+                    <div class="col-md-4">
+                        <label class="form-label">Cargo</label>
+                        <input class="form-control" name="role" placeholder="Ex: Senior QA" required>
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control" name="start_date" placeholder="Início">
+                        <label class="form-label">Início</label>
+                        <input class="form-control" name="start_date" placeholder="09.2022">
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control" name="end_date" placeholder="Fim">
+                        <label class="form-label">Fim</label>
+                        <input class="form-control" name="end_date" placeholder="Atual">
                     </div>
-                    <div class="col-md-12">
-                        <textarea class="form-control" name="description" rows="2" placeholder="Descrição"></textarea>
+                    <div class="col-12">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="description" rows="5" placeholder="Descreva suas atividades..."></textarea>
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control" name="sort_order" placeholder="Ordem" value="0">
+                        <label class="form-label">Ordem</label>
+                        <input class="form-control" name="sort_order" type="number" value="0">
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-success w-100">Adicionar</button>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button class="btn btn-success w-100">Adicionar Experiência</button>
                     </div>
                 </form>
 
-                <h5>Experiências</h5>
+                <h5 class="mb-3 border-bottom pb-2 text-primary">Gerenciar Experiências</h5>
                 {% for exp in experiences %}
-                <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-2 align-items-end mb-2">
-                    <div class="col-md-3">
-                        <input class="form-control form-control-sm" name="company" value="{{ exp.company }}" placeholder="Empresa">
-                    </div>
-                    <div class="col-md-3">
-                        <input class="form-control form-control-sm" name="role" value="{{ exp.role }}" placeholder="Cargo">
-                    </div>
-                    <div class="col-md-2">
-                        <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}" placeholder="Início">
-                    </div>
-                    <div class="col-md-2">
-                        <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}" placeholder="Fim">
-                    </div>
-                    <div class="col-md-2">
-                        <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" placeholder="Ordem">
-                    </div>
-                    <div class="col-md-12">
-                        <textarea class="form-control form-control-sm" name="description" rows="2" placeholder="Descrição">{{ exp.description }}</textarea>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-outline-primary btn-sm w-100">Salvar</button>
-                    </div>
-                </form>
-                <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" class="mb-3">
-                    <button class="btn btn-outline-danger btn-sm">Remover</button>
-                </form>
-                {% endfor %}
-
-                <h5>Formação</h5>
-                {% for exp in education %}
-                <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-2 align-items-end mb-2">
-                    <div class="col-md-3">
-                        <input class="form-control form-control-sm" name="company" value="{{ exp.company }}" placeholder="Instituição">
-                    </div>
-                    <div class="col-md-3">
-                        <input class="form-control form-control-sm" name="role" value="{{ exp.role }}" placeholder="Curso">
-                    </div>
-                    <div class="col-md-2">
-                        <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}" placeholder="Início">
-                    </div>
-                    <div class="col-md-2">
-                        <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}" placeholder="Fim">
-                    </div>
-                    <div class="col-md-2">
-                        <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" placeholder="Ordem">
-                    </div>
-                    <div class="col-md-12">
-                        <textarea class="form-control form-control-sm" name="description" rows="2" placeholder="Descrição">{{ exp.description }}</textarea>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-outline-primary btn-sm w-100">Salvar</button>
-                    </div>
-                </form>
-                <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" class="mb-3">
-                    <button class="btn btn-outline-danger btn-sm">Remover</button>
-                </form>
+                <div class="card mb-4 border-0 bg-light p-3 shadow-sm border-start border-4 border-primary">
+                    <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">Empresa</label>
+                            <input class="form-control form-control-sm" name="company" value="{{ exp.company }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">Cargo</label>
+                            <input class="form-control form-control-sm" name="role" value="{{ exp.role }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small mb-1">Início</label>
+                            <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small mb-1">Fim</label>
+                            <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}">
+                        </div>
+                        <div class="col-md-10">
+                            <label class="form-label small mb-1">Descrição</label>
+                            <textarea class="form-control form-control-sm" name="description" rows="6">{{ exp.description }}</textarea>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small mb-1">Ordem</label>
+                            <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" type="number">
+                        </div>
+                        <div class="col-12 d-flex gap-2">
+                            <button class="btn btn-primary btn-sm px-4">Salvar</button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="if(confirm('Remover?')) this.parentNode.nextElementSibling.submit()">Remover</button>
+                        </div>
+                    </form>
+                    <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" style="display:none"></form>
+                </div>
                 {% endfor %}
             </div>
 
+            <!-- FORMAÇÃO -->
+            <div class="tab-pane fade" id="tab-edu" role="tabpanel">
+                <h4 class="mb-4">Formação Acadêmica / Cursos</h4>
+                <form method="POST" action="/admin/experiences/add" class="row g-3 mb-5 p-3 bg-light rounded border shadow-sm">
+                    <input type="hidden" name="kind" value="education">
+                    <div class="col-md-4">
+                        <label class="form-label">Instituição</label>
+                        <input class="form-control" name="company" placeholder="Ex: UNIME" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Curso/Certificação</label>
+                        <input class="form-control" name="role" placeholder="Ex: Bacharel em SI" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Início</label>
+                        <input class="form-control" name="start_date" placeholder="2010">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Fim</label>
+                        <input class="form-control" name="end_date" placeholder="2014">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Detalhes da formação..."></textarea>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Ordem</label>
+                        <input class="form-control" name="sort_order" type="number" value="0">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button class="btn btn-success w-100">Adicionar Formação</button>
+                    </div>
+                </form>
+
+                <h5 class="mb-3 border-bottom pb-2 text-success">Gerenciar Formação</h5>
+                {% for exp in education %}
+                <div class="card mb-3 border-0 bg-light p-3 shadow-sm border-start border-4 border-success">
+                    <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">Instituição</label>
+                            <input class="form-control form-control-sm" name="company" value="{{ exp.company }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small mb-1">Curso</label>
+                            <input class="form-control form-control-sm" name="role" value="{{ exp.role }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small mb-1">Início</label>
+                            <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small mb-1">Fim</label>
+                            <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}">
+                        </div>
+                        <div class="col-md-10">
+                            <label class="form-label small mb-1">Descrição</label>
+                            <textarea class="form-control form-control-sm" name="description" rows="4">{{ exp.description }}</textarea>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small mb-1">Ordem</label>
+                            <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" type="number">
+                        </div>
+                        <div class="col-12 d-flex gap-2">
+                            <button class="btn btn-primary btn-sm px-4">Salvar</button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="if(confirm('Remover?')) this.parentNode.nextElementSibling.submit()">Remover</button>
+                        </div>
+                    </form>
+                    <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" style="display:none"></form>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- PORTFÓLIO -->
             <div class="tab-pane fade" id="tab-projects" role="tabpanel">
-                <h4 class="mb-3">Portfólio</h4>
-                <form method="POST" action="/admin/projects/add" class="row g-3 mb-4" enctype="multipart/form-data">
+                <h4 class="mb-4">Portfólio</h4>
+                <form method="POST" action="/admin/projects/add" class="row g-3 mb-5 p-3 bg-light rounded border shadow-sm" enctype="multipart/form-data">
                     <div class="col-md-4">
-                        <input class="form-control" name="title" placeholder="Título" required>
+                        <label class="form-label">Título</label>
+                        <input class="form-control" name="title" required>
                     </div>
                     <div class="col-md-4">
-                        <input class="form-control" name="tech" placeholder="Tecnologias">
+                        <label class="form-label">Tecnologias</label>
+                        <input class="form-control" name="tech" placeholder="Ex: React, MongoDB">
                     </div>
                     <div class="col-md-4">
-                        <input class="form-control" name="project_url" placeholder="Link do projeto">
+                        <label class="form-label">URL do Projeto</label>
+                        <input class="form-control" name="project_url">
                     </div>
                     <div class="col-md-4">
-                        <input class="form-control" name="repo_url" placeholder="Link do repositório">
+                        <label class="form-label">URL do Repositório</label>
+                        <input class="form-control" name="repo_url">
                     </div>
                     <div class="col-md-4">
-                        <input class="form-control" name="image_url" placeholder="URL da imagem">
+                        <label class="form-label">URL Imagem</label>
+                        <input class="form-control" name="image_url">
                     </div>
                     <div class="col-md-4">
+                        <label class="form-label">Upload Imagem</label>
                         <input class="form-control" name="image_upload" type="file">
                     </div>
-                    <div class="col-md-12">
-                        <textarea class="form-control" name="description" rows="2" placeholder="Descrição"></textarea>
+                    <div class="col-12">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-check">
-                            <input class="form-check-input" type="checkbox" name="featured">
-                            <span class="form-check-label">Destacar</span>
-                        </label>
+                        <div class="form-check pt-2">
+                            <input class="form-check-input" type="checkbox" name="featured" id="chk-feat-new">
+                            <label class="form-check-label" for="chk-feat-new">Destacar Projeto</label>
+                        </div>
                     </div>
                     <div class="col-md-3">
-                        <button class="btn btn-success w-100">Adicionar</button>
+                        <button class="btn btn-success w-100">Adicionar Projeto</button>
                     </div>
                 </form>
 
-                {% for project in projects %}
-                <form method="POST" action="/admin/projects/{{ project.id }}/update" class="row g-2 align-items-end mb-2" enctype="multipart/form-data">
-                    <div class="col-md-4">
-                        <input class="form-control form-control-sm" name="title" value="{{ project.title }}" placeholder="Título">
+                <h5 class="mb-3">Gerenciar Projetos</h5>
+                <div class="row">
+                    {% for project in projects %}
+                    <div class="col-md-12 mb-4">
+                        <div class="card shadow-sm border-0 bg-light p-3">
+                            <form method="POST" action="/admin/projects/{{ project.id }}/update" class="row g-3" enctype="multipart/form-data">
+                                <div class="col-md-4">
+                                    <label class="form-label small">Título</label>
+                                    <input class="form-control form-control-sm" name="title" value="{{ project.title }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small">Tecnologias</label>
+                                    <input class="form-control form-control-sm" name="tech" value="{{ project.tech }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small">Featured</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="featured" {% if project.featured %}checked{% endif %}>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small">Project URL</label>
+                                    <input class="form-control form-control-sm" name="project_url" value="{{ project.project_url }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small">Repo URL</label>
+                                    <input class="form-control form-control-sm" name="repo_url" value="{{ project.repo_url }}">
+                                </div>
+                                <div class="col-md-4">
+                                    {% if project.image_url %}
+                                        <div class="mb-1"><small>Atual:</small> <a href="{{ project.image_url }}" target="_blank">Ver</a></div>
+                                    {% endif %}
+                                    <input class="form-control form-control-sm" name="image_upload" type="file">
+                                </div>
+                                <div class="col-md-10">
+                                    <label class="form-label small">Descrição</label>
+                                    <textarea class="form-control form-control-sm" name="description" rows="4">{{ project.description }}</textarea>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end gap-2">
+                                    <button class="btn btn-primary btn-sm w-100">Salvar</button>
+                                </div>
+                            </form>
+                            <form method="POST" action="/admin/projects/{{ project.id }}/delete" class="mt-2" onsubmit="return confirm('Excluir projeto?')">
+                                <button class="btn btn-outline-danger btn-sm">Remover</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <input class="form-control form-control-sm" name="tech" value="{{ project.tech }}" placeholder="Tecnologias">
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control form-control-sm" name="project_url" value="{{ project.project_url }}" placeholder="Link do projeto">
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control form-control-sm" name="repo_url" value="{{ project.repo_url }}" placeholder="Link do repositório">
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control form-control-sm" name="image_url" value="{{ project.image_url }}" placeholder="URL da imagem">
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control form-control-sm" name="image_upload" type="file">
-                    </div>
-                    <div class="col-md-12">
-                        <textarea class="form-control form-control-sm" name="description" rows="2" placeholder="Descrição">{{ project.description }}</textarea>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-check">
-                            <input class="form-check-input" type="checkbox" name="featured" {% if project.featured %}checked{% endif %}>
-                            <span class="form-check-label">Destacar</span>
-                        </label>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-outline-primary btn-sm w-100">Salvar</button>
-                    </div>
-                </form>
-                <form method="POST" action="/admin/projects/{{ project.id }}/delete" class="mb-3">
-                    <button class="btn btn-outline-danger btn-sm">Remover</button>
-                </form>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
 
+            <!-- CONTATO -->
             <div class="tab-pane fade" id="tab-messages" role="tabpanel">
-                <h4 class="mb-3">Mensagens Recebidas</h4>
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Assunto</th>
-                            <th>Data</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for msg in messages %}
-                        <tr>
-                            <td>{{ msg.name }}</td>
-                            <td>{{ msg.email }}</td>
-                            <td>{{ msg.subject }}</td>
-                            <td>{{ msg.created_at }}</td>
-                            <td>
-                                <form method="POST" action="/admin/messages/{{ msg.id }}/delete">
-                                    <button class="btn btn-outline-danger btn-sm">Remover</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="5" class="text-muted">{{ msg.message }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <h4 class="mb-4">Mensagens Recebidas</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Remetente</th>
+                                <th>Assunto</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for msg in messages %}
+                            <tr>
+                                <td>
+                                    <strong>{{ msg.name }}</strong><br>
+                                    <small class="text-muted">{{ msg.email }}</small>
+                                </td>
+                                <td>{{ msg.subject }}</td>
+                                <td>{{ msg.created_at }}</td>
+                                <td>
+                                    <form method="POST" action="/admin/messages/{{ msg.id }}/delete" onsubmit="return confirm('Remover mensagem?')">
+                                        <button class="btn btn-outline-danger btn-sm">Remover</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="bg-light p-3 rounded">
+                                    <p class="mb-0 text-dark">{{ msg.message }}</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="../static/bootstrap/js/bootstrap.bundle.js"></script>
+    <!-- Quill library -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <script>
+        // Init Quill for multiple editors
+        function initQuill(editorId, textareaId) {
+            const textarea = document.getElementById(textareaId);
+            const quill = new Quill('#' + editorId, {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['link', 'blockquote', 'code-block'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // Set initial content
+            quill.root.innerHTML = textarea.value;
+
+            // Update textarea on change
+            quill.on('text-change', function() {
+                textarea.value = quill.root.innerHTML;
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            initQuill('editor-about', 'textarea-about');
+            initQuill('editor-emp-desc1', 'textarea-emp-desc1');
+            initQuill('editor-emp-desc2', 'textarea-emp-desc2');
+
+            // Handle forms that use quill
+            const forms = ['form-about', 'form-emp'];
+            forms.forEach(formId => {
+                const form = document.getElementById(formId);
+                if(form) {
+                    form.onsubmit = function() {
+                        // All sync is done via 'text-change' listener
+                        return true;
+                    };
+                }
+            });
+        });
+    </script>
 </body>
 </html>

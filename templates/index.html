@@ -98,7 +98,7 @@
             <div class="row w-100">
                 <div class="col-md-12" data-anime="down">
                     <h2 class='pt-3' data-i18n="sobre-title">Sobre</h2>
-                    <p>{{ about|nl2br }}</p>
+                    <p>{{ about|safe }}</p>
                 </div>
             </div>
 
@@ -108,30 +108,25 @@
                         data-anime="left">
                 </div>
                 <div class="col-md-8" data-anime="right">
-                    <h3 data-i18n="sobre-emp-title">Empreendedor</h3>
-                    <p data-i18n="sobre-emp-p1">Atualmente venho desenvolvendo e estruturando um projeto pessoal,
-                        inclusive contratando Devs Front e Back para a implementação de uma possível solução que pode se
-                        tornar o carro chefe da minha pequena empresa. Porém isso é feito de forma bem tranquila e suave
-                        sem pressa visto que em paralelo me dedico Full Time na prestação do serviço e contrato
-                        proposto.</p>
+                    <h3>{{ settings.emp_title }}</h3>
+                    <div>
+                        {{ settings.emp_desc1|safe }}
+                    </div>
 
                     <div class="row mt-3 mb-3">
                         <div class="col-md-6">
                             <ul class="list-group list-group-flush fs-5">
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-niver">Niver</span>: <span class="fw-lighter">14 de Setembro
-                                        de 1989</span>
+                                    <span data-i18n="sobre-niver">Niver</span>: <span class="fw-lighter">{{ settings.emp_niver }}</span>
                                 </li>
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-idade">Idade</span>: <span class="fw-lighter">33 anos</span>
+                                    <span data-i18n="sobre-idade">Idade</span>: <span class="fw-lighter">{{ settings.emp_idade }}</span>
                                 </li>
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-cidade">Cidade</span>: <span class="fw-lighter">Lauro de
-                                        Freitas</span>
+                                    <span data-i18n="sobre-cidade">Cidade</span>: <span class="fw-lighter">{{ settings.emp_cidade }}</span>
                                 </li>
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-estado">Estado</span>: <span class="fw-lighter"
-                                        data-i18n="sobre-estado-val">Bahia</span>
+                                    <span data-i18n="sobre-estado">Estado</span>: <span class="fw-lighter">{{ settings.emp_estado }}</span>
                                 </li>
 
                             </ul>
@@ -139,25 +134,22 @@
                         <div class="col-md-6">
                             <ul class="list-group list-group-flush fs-5">
                                 <li class="list-group-item"><span data-i18n="sobre-hobby">Hobby</span>: <span
-                                        class="fw-lighter" data-i18n="sobre-hobby-val">Viajar</span></li>
-                                <li class="list-group-item">Site: <a href="https://thicode.netlify.app/mudar-link"
+                                        class="fw-lighter">{{ settings.emp_hobby }}</span></li>
+                                <li class="list-group-item">Site: <a href="{{ settings.emp_site_url }}"
                                         target="_blank"
-                                        class="fw-lighter text-decoration-none link-dark">links.isaiasilva</a></li>
+                                        class="fw-lighter text-decoration-none link-dark">{{ settings.emp_site }}</a></li>
                                 <li class="list-group-item"><span data-i18n="sobre-trabalho">Trabalho</span>: <a
-                                        href="https://blueedtech.com.br/mudar-link" target="_blank"
-                                        class="fw-lighter text-decoration-none link-dark">CEO - ISSQA</a></li>
+                                        href="{{ settings.emp_trabalho_url }}" target="_blank"
+                                        class="fw-lighter text-decoration-none link-dark">{{ settings.emp_trabalho }}</a></li>
                                 <li class="list-group-item"><span data-i18n="sobre-xp">Experiência</span>: <span
-                                        class="fw-lighter"> +10 anos </span></li>
+                                        class="fw-lighter"> {{ settings.emp_xp }} </span></li>
 
                             </ul>
                         </div>
                     </div>
-                    <p data-i18n="sobre-emp-p2"> Dedico meu tempo para coordenar e gerenciar uma pequena empresa, bem
-                        como para apoiar causas sociais, como resgatar e orientar jovens da droga e da perdição para o
-                        caminho de Cristo. Gosto de fazer o bem, arrecadar alimentos e ajudar os menos afortunados. Além
-                        disso, minha família é muito importante para mim, pois tenho uma esposa amorosa que cuida de
-                        mim, uma filha adorável e um animal de estimação que completam minha vida. Apesar de ter redes
-                        sociais, sou uma pessoa discreta em relação à minha vida pessoal.</p>
+                    <div>
+                        {{ settings.emp_desc2|safe }}
+                    </div>
                 </div>
             </div>
 

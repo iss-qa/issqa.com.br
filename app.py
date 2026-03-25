@@ -123,6 +123,20 @@ def init_app_data():
             "background_image": "/static/img/bannerPortifolio.png",
             "contact_email": "qa.eng.isaiasilva@gmail.com",
             "whatsapp": "https://wa.me/5571996838735",
+            # Entrepreneur Section Basics
+            "emp_title": "Empreendedor",
+            "emp_desc1": "Atualmente venho desenvolvendo e estruturando um projeto pessoal, inclusive contratando Devs Front e Back para a implementação de uma possível solução que pode se tornar o carro chefe da minha pequena empresa.",
+            "emp_desc2": "Dedico meu tempo para coordenar e gerenciar uma pequena empresa, bem como para apoiar causas sociais, como resgatar e orientar jovens da droga e da perdição para o caminho de Cristo.",
+            "emp_niver": "14 de Setembro de 1989",
+            "emp_idade": "33 anos",
+            "emp_cidade": "Lauro de Freitas",
+            "emp_estado": "Bahia",
+            "emp_hobby": "Viajar",
+            "emp_site": "links.isaiasilva",
+            "emp_site_url": "https://links.isaiasilva.com.br",
+            "emp_trabalho": "CEO - ISSQA",
+            "emp_trabalho_url": "https://issqa.com.br",
+            "emp_xp": "+10 anos",
         }
     )
     seed_about(
@@ -165,6 +179,19 @@ def index():
         "background_image": get_setting("background_image", "/static/img/bannerPortifolio.png"),
         "contact_email": get_setting("contact_email", "qa.eng.isaiasilva@gmail.com"),
         "whatsapp": get_setting("whatsapp", "https://wa.me/5571996838735"),
+        "emp_title": get_setting("emp_title", "Empreendedor"),
+        "emp_desc1": get_setting("emp_desc1", ""),
+        "emp_desc2": get_setting("emp_desc2", ""),
+        "emp_niver": get_setting("emp_niver", "14 de Setembro de 1989"),
+        "emp_idade": get_setting("emp_idade", "33 anos"),
+        "emp_cidade": get_setting("emp_cidade", "Lauro de Freitas"),
+        "emp_estado": get_setting("emp_estado", "Bahia"),
+        "emp_hobby": get_setting("emp_hobby", "Viajar"),
+        "emp_site": get_setting("emp_site", "links.isaiasilva"),
+        "emp_site_url": get_setting("emp_site_url", "https://links.isaiasilva.com.br"),
+        "emp_trabalho": get_setting("emp_trabalho", "CEO - ISSQA"),
+        "emp_trabalho_url": get_setting("emp_trabalho_url", "https://issqa.com.br"),
+        "emp_xp": get_setting("emp_xp", "+10 anos"),
     }
 
     return render_template(
@@ -223,6 +250,19 @@ def admin():
         "background_image": get_setting("background_image", ""),
         "contact_email": get_setting("contact_email", ""),
         "whatsapp": get_setting("whatsapp", ""),
+        "emp_title": get_setting("emp_title", "Empreendedor"),
+        "emp_desc1": get_setting("emp_desc1", ""),
+        "emp_desc2": get_setting("emp_desc2", ""),
+        "emp_niver": get_setting("emp_niver", ""),
+        "emp_idade": get_setting("emp_idade", ""),
+        "emp_cidade": get_setting("emp_cidade", ""),
+        "emp_estado": get_setting("emp_estado", ""),
+        "emp_hobby": get_setting("emp_hobby", ""),
+        "emp_site": get_setting("emp_site", ""),
+        "emp_site_url": get_setting("emp_site_url", ""),
+        "emp_trabalho": get_setting("emp_trabalho", ""),
+        "emp_trabalho_url": get_setting("emp_trabalho_url", ""),
+        "emp_xp": get_setting("emp_xp", ""),
     }
 
     return render_template(
@@ -268,11 +308,37 @@ def admin_profile():
 @app.route("/admin/about", methods=["POST"])
 @login_required
 def admin_about():
-    content = request.form.get("about_content", "").strip()
+    content = request.form.get("about_content", "")
     if content:
         db = get_db()
         db.about.insert_one({"content": content, "created_at": datetime.utcnow()})
         flash("Sobre atualizado.")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/entrepreneur", methods=["POST"])
+@login_required
+def admin_entrepreneur():
+    fields = [
+        "emp_title",
+        "emp_desc1",
+        "emp_desc2",
+        "emp_niver",
+        "emp_idade",
+        "emp_cidade",
+        "emp_estado",
+        "emp_hobby",
+        "emp_site",
+        "emp_site_url",
+        "emp_trabalho",
+        "emp_trabalho_url",
+        "emp_xp",
+    ]
+    for field in fields:
+        val = request.form.get(field, "").strip()
+        set_setting(field, val)
+
+    flash("Seção Empreendedor atualizada.")
     return redirect(url_for("admin"))
 
 
