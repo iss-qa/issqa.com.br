@@ -17,7 +17,7 @@
     <i class="bi bi-list menu-mobile"></i>
 
     <!-- Botão de tradução -->
-    <button id="lang-toggle" class="btn btn-outline-light position-fixed top-0 end-0 m-3" style="z-index: 1000;">🇺🇸
+    <button id="lang-toggle" class="btn position-fixed top-0 end-0 m-3 lang-toggle">🇺🇸
         English</button>
 
     <aside id="header">
@@ -77,20 +77,16 @@
 
     <main id="main">
 
-        <section id="inicio" class="row m-0 p-0" style="background-image: url('{{ settings.background_image }}');">
-            <div class="col-md-5 d-flex justify-content-center align-items-center flex-column">
-                <h2 class="text-white text-shadow justify-content-md-center">{{ settings.site_name }}</h2>
-                <span id="subtitle" class="text-white text-shadow">{{ settings.site_title }}</span>
+        <section id="inicio" style="background-image: url('{{ settings.background_image }}');">
+            <div class="hero-text">
+                <h2 class="text-white text-shadow">{{ settings.site_name }}</h2>
+                <span id="subtitle" class="text-white text-shadow" data-i18n-en="{{ settings.site_title_en }}">{{ settings.site_title }}</span>
             </div>
 
-
-            <div class="col-md-7 d-flex justify-content-end align-items-end">
-                <div id="arraste" class="d-flex align-items-center">
-                    <i class="bi bi-arrow-down text-white pe-2 fs-2" aria-hidden="true"></i>
-                    <a href="#sobre">Arrate para mais</a>
-                </div>
+            <div id="arraste" class="d-flex align-items-center">
+                <i class="bi bi-arrow-down text-white pe-2 fs-2" aria-hidden="true"></i>
+                <a href="#sobre" data-i18n="hero-scroll">Arraste para mais</a>
             </div>
-
         </section>
 
         <!-- Seção Sobre -->
@@ -98,7 +94,7 @@
             <div class="row w-100">
                 <div class="col-md-12" data-anime="down">
                     <h2 class='pt-3' data-i18n="sobre-title">Sobre</h2>
-                    <p>{{ about|safe }}</p>
+                    <p data-i18n-en="{{ about_en|e }}">{{ about|safe }}</p>
                 </div>
             </div>
 
@@ -108,8 +104,8 @@
                         data-anime="left">
                 </div>
                 <div class="col-md-8" data-anime="right">
-                    <h3>{{ settings.emp_title }}</h3>
-                    <div>
+                    <h3 data-i18n-en="{{ settings.emp_title_en }}">{{ settings.emp_title }}</h3>
+                    <div data-i18n-en="{{ settings.emp_desc1_en|e }}">
                         {{ settings.emp_desc1|safe }}
                     </div>
 
@@ -117,16 +113,16 @@
                         <div class="col-md-6">
                             <ul class="list-group list-group-flush fs-5">
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-niver">Niver</span>: <span class="fw-lighter">{{ settings.emp_niver }}</span>
+                                    <span data-i18n="sobre-niver">Niver</span>: <span class="fw-lighter" data-i18n-en="{{ settings.emp_niver_en }}">{{ settings.emp_niver }}</span>
                                 </li>
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-idade">Idade</span>: <span class="fw-lighter">{{ settings.emp_idade }}</span>
+                                    <span data-i18n="sobre-idade">Idade</span>: <span class="fw-lighter" data-i18n-en="{{ settings.emp_idade_en }}">{{ settings.emp_idade }}</span>
                                 </li>
                                 <li class="list-group-item">
                                     <span data-i18n="sobre-cidade">Cidade</span>: <span class="fw-lighter">{{ settings.emp_cidade }}</span>
                                 </li>
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-estado">Estado</span>: <span class="fw-lighter">{{ settings.emp_estado }}</span>
+                                    <span data-i18n="sobre-estado">Estado</span>: <span class="fw-lighter" data-i18n-en="{{ settings.emp_estado_en }}">{{ settings.emp_estado }}</span>
                                 </li>
 
                             </ul>
@@ -134,20 +130,25 @@
                         <div class="col-md-6">
                             <ul class="list-group list-group-flush fs-5">
                                 <li class="list-group-item"><span data-i18n="sobre-hobby">Hobby</span>: <span
-                                        class="fw-lighter">{{ settings.emp_hobby }}</span></li>
+                                        class="fw-lighter" data-i18n-en="{{ settings.emp_hobby_en }}">{{ settings.emp_hobby }}</span></li>
                                 <li class="list-group-item">Site: <a href="{{ settings.emp_site_url }}"
                                         target="_blank"
                                         class="fw-lighter text-decoration-none link-dark">{{ settings.emp_site }}</a></li>
                                 <li class="list-group-item"><span data-i18n="sobre-trabalho">Trabalho</span>: <a
                                         href="{{ settings.emp_trabalho_url }}" target="_blank"
-                                        class="fw-lighter text-decoration-none link-dark">{{ settings.emp_trabalho }}</a></li>
+                                        class="fw-lighter text-decoration-none link-dark" data-i18n-en="{{ settings.emp_trabalho_en }}">{{ settings.emp_trabalho }}</a></li>
                                 <li class="list-group-item"><span data-i18n="sobre-xp">Experiência</span>: <span
-                                        class="fw-lighter"> {{ settings.emp_xp }} </span></li>
+                                        class="fw-lighter" data-i18n-en="{{ settings.emp_xp_en }}"> {{ settings.emp_xp }} </span></li>
 
                             </ul>
                         </div>
                     </div>
-                    <div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12" data-anime="up">
+                    <div data-i18n-en="{{ settings.emp_desc2_en|e }}">
                         {{ settings.emp_desc2|safe }}
                     </div>
                 </div>
@@ -171,7 +172,7 @@
                     <div class="col-md-6">
                         {% for skill in skills %}
                             {% if loop.index0 % 2 == 0 %}
-                                <p class="mt-3 mb-0">{{ skill.name }}</p>
+                                <p class="mt-3 mb-0" data-i18n-en="{{ skill.name_en or '' }}">{{ skill.name }}</p>
                                 <div class="progress">
                                     <div class="progress-bar" data-anime="left" role="progressbar"
                                         style="width: {{ skill.level }}%;"
@@ -185,7 +186,7 @@
                     <div class="col-md-6">
                         {% for skill in skills %}
                             {% if loop.index0 % 2 == 1 %}
-                                <p class="mt-3 mb-0">{{ skill.name }}</p>
+                                <p class="mt-3 mb-0" data-i18n-en="{{ skill.name_en or '' }}">{{ skill.name }}</p>
                                 <div class="progress">
                                     <div class="progress-bar" data-anime="left" role="progressbar"
                                         style="width: {{ skill.level }}%;"
@@ -205,16 +206,37 @@
         <!-- Seção Curriculo -->
         <section class="mt-5 cv" id="curriculo">
             <div class="container pb-5">
-                <h2 class="pt-3 pb-4">Currículo</h2>
+                <h2 class="pt-3 pb-4" data-i18n="cv-title">Currículo</h2>
+
+                <div class="resume-download card border-0 shadow-sm mb-4" data-anime="up">
+                    <div class="card-body d-flex flex-wrap align-items-center gap-3 justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-file-earmark-pdf-fill resume-download-icon"></i>
+                            <div>
+                                <strong data-i18n="cv-download-title">Baixar currículo em PDF (ATS-friendly)</strong>
+                                <div class="text-muted small">ISSQA Master Template 2026</div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-primary" href="/static/Isaias_Silva_Resume.pdf" target="_blank" download>
+                                🇧🇷 <span data-i18n="cv-download-pt">Português</span>
+                            </a>
+                            <a class="btn btn-primary" href="/static/Isaias_Silva_Resume_EN.pdf" target="_blank" download>
+                                🇺🇸 <span data-i18n="cv-download-en">English</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-12">
-                        <h3 class="cv-title">Experiência Profissional</h3>
+                        <h3 class="cv-title" data-i18n="cv-work-title">Experiência Profissional</h3>
                         {% for exp in experiences %}
                         <div class="cv-item" data-anime="up">
-                            <h5>{{ exp.role }}</h5>
+                            <h5 data-i18n-en="{% if exp.role_en %}{{ exp.role_en }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}{% endif %}">{{ exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}</h5>
                             <h6>{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% endif %}</h6>
-                            <p><em>{{ exp.company }}</em></p>
-                            {% if exp.description %}<p>{{ exp.description }}</p>{% endif %}
+                            <p><em data-i18n-en="{{ exp.company_en or '' }}">{{ exp.company }}</em></p>
+                            {% if exp.description %}<p data-i18n-en="{{ exp.description_en|e if exp.description_en else '' }}">{{ exp.description }}</p>{% endif %}
                         </div>
                         {% endfor %}
                     </div>
@@ -230,10 +252,10 @@
                     <div class="col-md-12">
                         {% for edu in education %}
                         <div class="cv-item" data-anime="up">
-                            <h5>{{ edu.role }}</h5>
+                            <h5 data-i18n-en="{{ edu.role_en or '' }}">{{ edu.role }}</h5>
                             <h6>{{ edu.start_date }}{% if edu.end_date %} - {{ edu.end_date }}{% endif %}</h6>
-                            <p><em>{{ edu.company }}</em></p>
-                            {% if edu.description %}<p>{{ edu.description }}</p>{% endif %}
+                            <p><em data-i18n-en="{{ edu.company_en or '' }}">{{ edu.company }}</em></p>
+                            {% if edu.description %}<p data-i18n-en="{{ edu.description_en|e if edu.description_en else '' }}">{{ edu.description }}</p>{% endif %}
                         </div>
                         {% endfor %}
                     </div>
@@ -254,9 +276,9 @@
                                 <img src="{{ project.image_url }}" class="card-img-top img-fluid w-100" alt="{{ project.title }}">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title">{{ project.title }}</h5>
-                                {% if project.description %}<p class="card-text">{{ project.description }}</p>{% endif %}
-                                {% if project.tech %}<p class="text-muted">{{ project.tech }}</p>{% endif %}
+                                <h5 class="card-title" data-i18n-en="{{ project.title_en or '' }}">{{ project.title }}</h5>
+                                {% if project.description %}<p class="card-text" data-i18n-en="{{ project.description_en|e if project.description_en else '' }}">{{ project.description }}</p>{% endif %}
+                                {% if project.tech %}<p class="text-muted" data-i18n-en="{{ project.tech_en or '' }}">{{ project.tech }}</p>{% endif %}
                                 <div class="d-flex justify-content-center gap-2">
                                     {% if project.project_url %}
                                         <a href="{{ project.project_url }}" target='_blank' class="btn btn-outline-primary"><i class="bi bi-link-45deg"></i></a>
@@ -316,9 +338,9 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label for="assunto" class="form-label">Assunto:</label>
+                                    <label for="assunto" class="form-label" data-i18n="contact-form-subject">Assunto:</label>
                                     <input type="text" class="form-control" id="assunto" name="assunto"
-                                        placeholder="Digite o assunto">
+                                        data-i18n="contact-form-subject-ph" placeholder="Digite o assunto">
                                 </div>
 
                                 <div class="col-12">
@@ -375,7 +397,7 @@
     <footer id="footer">
         <div class="container">
             <div class="text-center">
-                &copy; Copyright <strong>IsaiaSilva 2023</strong>
+                &copy; Copyright <strong>IsaiaSilva 2026</strong>
             </div>
         </div>
     </footer>

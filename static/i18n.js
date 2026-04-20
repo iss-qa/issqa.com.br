@@ -149,6 +149,13 @@ const translations = {
         "port-6-t": "Pixeon Health Tech",
         "port-6-d": "A Pixeon é uma importante player no desenvolvimento de sistemas de gestão para a saúde, e oferece soluções completas para suportar todas as etapas.",
 
+        // Currículo static titles
+        "cv-work-title": "Experiência Profissional",
+        "hero-scroll": "Arraste para mais",
+        "cv-download-title": "Baixar currículo em PDF (ATS-friendly)",
+        "cv-download-pt": "Português",
+        "cv-download-en": "English",
+
         // Contato
         "contact-title": "Contato",
         "contact-loc": "Localização",
@@ -156,6 +163,8 @@ const translations = {
         "contact-form-name-ph": "Digite seu nome",
         "contact-form-email": "Email:",
         "contact-form-email-ph": "Digite seu email",
+        "contact-form-subject": "Assunto:",
+        "contact-form-subject-ph": "Digite o assunto",
         "contact-form-msg": "Mensagem:",
         "contact-form-msg-ph": "Digite sua mensagem",
         "contact-form-btn": "Enviar Mensagem",
@@ -310,6 +319,13 @@ const translations = {
         "port-6-t": "Pixeon Health Tech",
         "port-6-d": "Pixeon develops large-scale health management systems. In this role, I validated the SMART system and Smartweb delivery applications through manual test case design and Selenium automation.",
 
+        // Currículo static titles
+        "cv-work-title": "Work Experience",
+        "hero-scroll": "Scroll for more",
+        "cv-download-title": "Download resume as PDF (ATS-friendly)",
+        "cv-download-pt": "Português",
+        "cv-download-en": "English",
+
         // Contato
         "contact-title": "Contact",
         "contact-loc": "Location:",
@@ -317,6 +333,8 @@ const translations = {
         "contact-form-name-ph": "Enter your name",
         "contact-form-email": "Email:",
         "contact-form-email-ph": "Enter your email",
+        "contact-form-subject": "Subject:",
+        "contact-form-subject-ph": "Enter the subject",
         "contact-form-msg": "Message:",
         "contact-form-msg-ph": "Enter your message",
         "contact-form-btn": "Send Message",
@@ -330,29 +348,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentLang = localStorage.getItem("issqa-lang") || "pt";
 
-    // Função para atualizar todos elementos com data-i18n
+    // Função para atualizar todos elementos com data-i18n (textos estáticos)
     const applyTranslations = (lang) => {
         document.querySelectorAll("[data-i18n]").forEach(element => {
             const key = element.getAttribute("data-i18n");
 
-            // Tratamento especial para placeholders e val
+            // Tratamento especial para placeholders
             if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
-                if (element.placeholder) {
-                    element.placeholder = translations[lang][key] || element.placeholder;
+                if (element.placeholder && translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
                 }
-            } else {
-                element.innerHTML = translations[lang][key] || element.innerHTML;
+            } else if (translations[lang][key]) {
+                element.innerHTML = translations[lang][key];
             }
         });
+
+        // data-i18n-en: valor EN vem embutido direto no atributo (do banco)
+        // data-i18n-db: fallback para chaves estáticas deste i18n.js
+        // Em PT sempre usa o conteúdo original renderizado pelo servidor.
+        document.querySelectorAll("[data-i18n-en], [data-i18n-db]").forEach(element => {
+            if (element.dataset.i18nOriginal === undefined) {
+                element.dataset.i18nOriginal = element.innerHTML;
+            }
+            let replacement = null;
+            if (lang === "en") {
+                const enText = element.getAttribute("data-i18n-en");
+                if (enText && enText.trim()) {
+                    replacement = enText;
+                } else {
+                    const key = element.getAttribute("data-i18n-db");
+                    if (key && translations.en[key]) replacement = translations.en[key];
+                }
+            }
+            element.innerHTML = replacement || element.dataset.i18nOriginal;
+        });
+
+        // Define o atributo lang do documento
+        document.documentElement.lang = lang === "pt" ? "pt-br" : "en";
 
         // Atualiza o texto do botão
         langToggleBtn.innerHTML = lang === "pt" ? "🇺🇸 English" : "🇧🇷 Português";
 
-        // Atualiza o link do curriculo para download do PDF ATS-friendly 
+        // Botão do menu "Currículo" continua rolando para a seção #curriculo;
+        // o download do PDF fica na seção (modal/botões lado a lado).
         const resumeBtn = document.getElementById("download-resume-btn");
         if (resumeBtn) {
-            resumeBtn.href = lang === "pt" ? "#curriculo" : "../static/Isaias_Silva_Resume.pdf";
-            resumeBtn.target = lang === "pt" ? "" : "_blank";
+            resumeBtn.href = "#curriculo";
+            resumeBtn.removeAttribute("target");
+            resumeBtn.removeAttribute("download");
         }
     };
 

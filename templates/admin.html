@@ -10,8 +10,13 @@
     <title>Painel Admin</title>
     <style>
         .ql-editor {
-            min-height: 200px;
-            font-size: 16px;
+            min-height: 160px;
+            max-height: 320px;
+            overflow-y: auto;
+            font-size: 15px;
+        }
+        .ql-container {
+            margin-bottom: 0.5rem;
         }
         .nav-tabs .nav-link {
             transition: all 0.3s ease;
@@ -24,7 +29,34 @@
             font-weight: 600;
             color: #495057;
         }
-    </style>
+        /* Sobrescreve o .card { height: 600px } global de static/style.css */
+        .tab-content .card { height: auto; }
+        .exp-card { transition: box-shadow .2s ease; height: auto; }
+        .exp-card.sortable-ghost { opacity: .35; }
+        .exp-card.sortable-chosen { box-shadow: 0 0 0 2px #0d6efd; }
+        .exp-body[hidden] { display: none !important; }
+        .exp-header {
+            display: flex; align-items: center; gap: .75rem;
+            padding: .75rem 1rem; cursor: pointer; user-select: none;
+        }
+        .exp-header .drag-handle {
+            cursor: grab; color: #6c757d; font-size: 1.1rem;
+            padding: .25rem .5rem; border-radius: .25rem;
+        }
+        .exp-header .drag-handle:hover { background: #e9ecef; }
+        .exp-header .drag-handle:active { cursor: grabbing; }
+        .exp-toggle {
+            transition: transform .2s ease; color: #6c757d;
+        }
+        .exp-card.is-open .exp-toggle { transform: rotate(180deg); }
+        .exp-summary-meta { font-size: .85rem; color: #6c757d; }
+        .exp-body { padding: 0 1rem 1rem 1rem; }
+        .current-image-preview {
+            display: inline-block; max-width: 60px; max-height: 60px;
+            border: 1px solid #dee2e6; border-radius: .25rem; padding: 2px;
+            background: #fff; vertical-align: middle;
+        }
+</style>
 </head>
 <body class="bg-light">
     <div class="container py-4">
@@ -79,8 +111,12 @@
                             <input class="form-control" name="site_name" value="{{ settings.site_name }}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Títulos/Cargos</label>
+                            <label class="form-label">Títulos/Cargos (PT)</label>
                             <input class="form-control" name="site_title" value="{{ settings.site_title }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> Titles/Roles</label>
+                            <input class="form-control" name="site_title_en" value="{{ settings.site_title_en }}" placeholder="QA Lead, Test Automation, Entrepreneur">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">E-mail de contato</label>
@@ -92,16 +128,36 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Foto de perfil</label>
-                            <input type="file" class="form-control" name="profile_image">
+                            <input type="file" class="form-control" name="profile_image" accept="image/*">
                             {% if settings.profile_image %}
-                                <small class="text-muted">Atual: {{ settings.profile_image }}</small>
+                                <div class="mt-2 d-flex align-items-center gap-2">
+                                    <img src="{{ settings.profile_image }}" alt="Foto atual" class="current-image-preview">
+                                    <small class="text-muted">
+                                        Atual:
+                                        {% if settings.profile_image.startswith('data:') %}
+                                            imagem armazenada no banco
+                                        {% else %}
+                                            {{ settings.profile_image }}
+                                        {% endif %}
+                                    </small>
+                                </div>
                             {% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Imagem de fundo</label>
-                            <input type="file" class="form-control" name="background_image">
+                            <input type="file" class="form-control" name="background_image" accept="image/*">
                             {% if settings.background_image %}
-                                <small class="text-muted">Atual: {{ settings.background_image }}</small>
+                                <div class="mt-2 d-flex align-items-center gap-2">
+                                    <img src="{{ settings.background_image }}" alt="Fundo atual" class="current-image-preview">
+                                    <small class="text-muted">
+                                        Atual:
+                                        {% if settings.background_image.startswith('data:') %}
+                                            imagem armazenada no banco
+                                        {% else %}
+                                            {{ settings.background_image }}
+                                        {% endif %}
+                                    </small>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
@@ -114,8 +170,14 @@
                 <h4 class="mb-4">Editar Seção Sobre</h4>
                 <form method="POST" action="/admin/about" id="form-about">
                     <div class="mb-3">
+                        <label class="form-label">Conteúdo (PT)</label>
                         <div id="editor-about" class="bg-white"></div>
                         <textarea name="about_content" id="textarea-about" style="display:none">{{ about }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> English content</label>
+                        <div id="editor-about-en" class="bg-white"></div>
+                        <textarea name="about_content_en" id="textarea-about-en" style="display:none">{{ about_en }}</textarea>
                     </div>
                     <button class="btn btn-primary px-4">Salvar</button>
                 </form>
@@ -125,46 +187,87 @@
             <div class="tab-pane fade" id="tab-emp" role="tabpanel">
                 <h4 class="mb-4">Editar Seção Empreendedor</h4>
                 <form method="POST" action="/admin/entrepreneur" id="form-emp">
-                    <div class="row g-3">
-                        <div class="col-md-12 mb-2">
-                            <label class="form-label">Título da Seção</label>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Título da Seção (PT)</label>
                             <input class="form-control" name="emp_title" value="{{ settings.emp_title }}">
                         </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Texto de introdução (p1)</label>
+                        <div class="col-md-6">
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> Section title</label>
+                            <input class="form-control" name="emp_title_en" value="{{ settings.emp_title_en }}" placeholder="Entrepreneurship">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Texto de introdução — p1 (PT)</label>
                             <div id="editor-emp-desc1" class="bg-white"></div>
                             <textarea name="emp_desc1" id="textarea-emp-desc1" style="display:none">{{ settings.emp_desc1 }}</textarea>
                         </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Texto final (p2)</label>
+                        <div class="col-12">
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> Intro paragraph (p1)</label>
+                            <div id="editor-emp-desc1-en" class="bg-white"></div>
+                            <textarea name="emp_desc1_en" id="textarea-emp-desc1-en" style="display:none">{{ settings.emp_desc1_en }}</textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Texto final — p2 (PT)</label>
                             <div id="editor-emp-desc2" class="bg-white"></div>
                             <textarea name="emp_desc2" id="textarea-emp-desc2" style="display:none">{{ settings.emp_desc2 }}</textarea>
                         </div>
-                        
+                        <div class="col-12">
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> Closing paragraph (p2)</label>
+                            <div id="editor-emp-desc2-en" class="bg-white"></div>
+                            <textarea name="emp_desc2_en" id="textarea-emp-desc2-en" style="display:none">{{ settings.emp_desc2_en }}</textarea>
+                        </div>
+                    </div>
+
+                    <h6 class="text-uppercase text-muted small mb-2 mt-4">Dados pessoais</h6>
+                    <div class="row g-3 mb-4">
                         <div class="col-md-4">
-                            <label class="form-label">Aniversário</label>
-                            <input class="form-control" name="emp_niver" value="{{ settings.emp_niver }}">
+                            <label class="form-label">Aniversário (PT)</label>
+                            <input class="form-control" name="emp_niver" value="{{ settings.emp_niver }}" placeholder="14 de Setembro de 1989">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Idade</label>
-                            <input class="form-control" name="emp_idade" value="{{ settings.emp_idade }}">
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> Birthday</label>
+                            <input class="form-control" name="emp_niver_en" value="{{ settings.emp_niver_en }}" placeholder="September 14, 1989">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Idade (PT)</label>
+                            <input class="form-control" name="emp_idade" value="{{ settings.emp_idade }}" placeholder="36 anos">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> Age</label>
+                            <input class="form-control" name="emp_idade_en" value="{{ settings.emp_idade_en }}" placeholder="36 years old">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Cidade</label>
                             <input class="form-control" name="emp_cidade" value="{{ settings.emp_cidade }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Estado</label>
+                            <label class="form-label">Estado (PT)</label>
                             <input class="form-control" name="emp_estado" value="{{ settings.emp_estado }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Hobby</label>
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> State</label>
+                            <input class="form-control" name="emp_estado_en" value="{{ settings.emp_estado_en }}" placeholder="Bahia, BR">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Hobby (PT)</label>
                             <input class="form-control" name="emp_hobby" value="{{ settings.emp_hobby }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Experiência</label>
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> Hobby</label>
+                            <input class="form-control" name="emp_hobby_en" value="{{ settings.emp_hobby_en }}" placeholder="Traveling">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Experiência (PT)</label>
                             <input class="form-control" name="emp_xp" value="{{ settings.emp_xp }}">
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> Experience</label>
+                            <input class="form-control" name="emp_xp_en" value="{{ settings.emp_xp_en }}" placeholder="+10 years">
+                        </div>
+                    </div>
+
+                    <h6 class="text-uppercase text-muted small mb-2 mt-4">Links</h6>
+                    <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label">Site (exibição)</label>
                             <input class="form-control" name="emp_site" value="{{ settings.emp_site }}">
@@ -174,15 +277,20 @@
                             <input class="form-control" name="emp_site_url" value="{{ settings.emp_site_url }}">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Trabalho (exibição)</label>
+                            <label class="form-label">Trabalho (PT)</label>
                             <input class="form-control" name="emp_trabalho" value="{{ settings.emp_trabalho }}">
                         </div>
                         <div class="col-md-6">
+                            <label class="form-label"><span class="badge bg-secondary">EN</span> Work label</label>
+                            <input class="form-control" name="emp_trabalho_en" value="{{ settings.emp_trabalho_en }}" placeholder="CEO - ISSQA">
+                        </div>
+                        <div class="col-md-12">
                             <label class="form-label">Trabalho (URL)</label>
                             <input class="form-control" name="emp_trabalho_url" value="{{ settings.emp_trabalho_url }}">
                         </div>
                     </div>
-                    <button class="btn btn-primary mt-4 px-4">Salvar Seção</button>
+
+                    <button class="btn btn-primary mt-2 px-4">Salvar Seção</button>
                 </form>
             </div>
 
@@ -190,17 +298,21 @@
             <div class="tab-pane fade" id="tab-skills" role="tabpanel">
                 <h4 class="mb-4">Habilidades</h4>
                 <form method="POST" action="/admin/skills/add" class="row g-3 mb-4 p-3 bg-light rounded border">
-                    <div class="col-md-4">
-                        <label class="form-label">Nome</label>
-                        <input class="form-control" name="name" placeholder="Ex: Playwright" required>
+                    <div class="col-md-3">
+                        <label class="form-label">Nome (PT)</label>
+                        <input class="form-control" name="name" placeholder="Ex: Automação" required>
                     </div>
                     <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Name</label>
+                        <input class="form-control" name="name_en" placeholder="Ex: Test Automation">
+                    </div>
+                    <div class="col-md-2">
                         <label class="form-label">Nível (%)</label>
                         <input class="form-control" name="level" type="number" min="1" max="100" placeholder="95" required>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Ícone</label>
-                        <input class="form-control" name="icon" placeholder="Ex: bi bi-check-circle">
+                        <input class="form-control" name="icon" placeholder="bi bi-check-circle">
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button class="btn btn-success w-100">Adicionar</button>
@@ -219,17 +331,20 @@
                             <tr>
                                 <td>
                                     <form method="POST" action="/admin/skills/{{ skill.id }}/update" class="row g-2">
-                                        <div class="col-md-5">
-                                            <input class="form-control form-control-sm" name="name" value="{{ skill.name }}">
+                                        <div class="col-md-4">
+                                            <input class="form-control form-control-sm" name="name" value="{{ skill.name }}" placeholder="PT">
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-4">
+                                            <input class="form-control form-control-sm" name="name_en" value="{{ skill.name_en or '' }}" placeholder="EN">
+                                        </div>
+                                        <div class="col-md-1">
                                             <input class="form-control form-control-sm" name="level" type="number" min="1" max="100" value="{{ skill.level }}">
                                         </div>
-                                        <div class="col-md-3">
-                                            <input class="form-control form-control-sm" name="icon" value="{{ skill.icon }}">
-                                        </div>
                                         <div class="col-md-2">
-                                            <button class="btn btn-outline-primary btn-sm w-100">Salvar</button>
+                                            <input class="form-control form-control-sm" name="icon" value="{{ skill.icon }}" placeholder="ícone">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button class="btn btn-outline-primary btn-sm w-100" title="Salvar">OK</button>
                                         </div>
                                     </form>
                                 </td>
@@ -250,71 +365,141 @@
                 <h4 class="mb-4">Experiência Profissional</h4>
                 <form method="POST" action="/admin/experiences/add" class="row g-3 mb-5 p-3 bg-light rounded border shadow-sm">
                     <input type="hidden" name="kind" value="work">
-                    <div class="col-md-4">
-                        <label class="form-label">Empresa</label>
+                    <div class="col-md-3">
+                        <label class="form-label">Empresa (PT)</label>
                         <input class="form-control" name="company" placeholder="Ex: Foxbit" required>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Cargo</label>
+                    <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Company</label>
+                        <input class="form-control" name="company_en" placeholder="(opcional)">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Cargo (PT)</label>
                         <input class="form-control" name="role" placeholder="Ex: Senior QA" required>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Role</label>
+                        <input class="form-control" name="role_en" placeholder="Ex: Senior QA Engineer">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tipo de contrato</label>
+                        <select class="form-select" name="contract_type">
+                            <option value="">—</option>
+                            {% for ct in contract_types %}
+                            <option value="{{ ct }}">{{ ct }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Início</label>
                         <input class="form-control" name="start_date" placeholder="09.2022">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">Fim</label>
                         <input class="form-control" name="end_date" placeholder="Atual">
                     </div>
-                    <div class="col-12">
-                        <label class="form-label">Descrição</label>
-                        <textarea class="form-control" name="description" rows="5" placeholder="Descreva suas atividades..."></textarea>
-                    </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">Ordem</label>
                         <input class="form-control" name="sort_order" type="number" value="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Descrição (PT)</label>
+                        <textarea class="form-control" name="description" rows="5" placeholder="Descreva suas atividades..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Description</label>
+                        <textarea class="form-control" name="description_en" rows="5" placeholder="Describe your activities..."></textarea>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-success w-100">Adicionar Experiência</button>
                     </div>
                 </form>
 
-                <h5 class="mb-3 border-bottom pb-2 text-primary">Gerenciar Experiências</h5>
-                {% for exp in experiences %}
-                <div class="card mb-4 border-0 bg-light p-3 shadow-sm border-start border-4 border-primary">
-                    <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">Empresa</label>
-                            <input class="form-control form-control-sm" name="company" value="{{ exp.company }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">Cargo</label>
-                            <input class="form-control form-control-sm" name="role" value="{{ exp.role }}">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small mb-1">Início</label>
-                            <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small mb-1">Fim</label>
-                            <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}">
-                        </div>
-                        <div class="col-md-10">
-                            <label class="form-label small mb-1">Descrição</label>
-                            <textarea class="form-control form-control-sm" name="description" rows="6">{{ exp.description }}</textarea>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small mb-1">Ordem</label>
-                            <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" type="number">
-                        </div>
-                        <div class="col-12 d-flex gap-2">
-                            <button class="btn btn-primary btn-sm px-4">Salvar</button>
-                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="if(confirm('Remover?')) this.parentNode.nextElementSibling.submit()">Remover</button>
-                        </div>
-                    </form>
-                    <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" style="display:none"></form>
+                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                    <h5 class="mb-0 text-primary">Gerenciar Experiências</h5>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm exp-expand-all" data-target="sortable-work">Expandir todas</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm exp-collapse-all" data-target="sortable-work">Minimizar todas</button>
+                        <form method="POST" action="/admin/experiences/auto-order" onsubmit="return confirm('Reordenar automaticamente pela data de início/fim?')">
+                            <input type="hidden" name="kind" value="work">
+                            <button class="btn btn-outline-primary btn-sm" title="Ordena pela data de fim (mais recente primeiro) e, em empate, pela data de início">
+                                <i class="bi bi-sort-down"></i> Ordenar por data
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                {% endfor %}
+                <p class="small text-muted">Arraste o ícone <strong>&#9776;</strong> para reordenar. Clique no cabeçalho para expandir/minimizar.</p>
+                <div id="sortable-work" class="sortable-list" data-kind="work">
+                    {% for exp in experiences %}
+                    <div class="exp-card card mb-3 border-0 bg-light shadow-sm border-start border-4 border-primary" data-id="{{ exp.id }}">
+                        <div class="exp-header">
+                            <span class="drag-handle" title="Arraste para reordenar">&#9776;</span>
+                            <div class="flex-grow-1">
+                                <div>
+                                    <strong>{{ exp.company or 'Sem empresa' }}</strong>
+                                    <span class="text-muted">— {{ exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}</span>
+                                </div>
+                                <div class="exp-summary-meta">{{ exp.start_date or '—' }}{% if exp.end_date %} &middot; {{ exp.end_date }}{% endif %}</div>
+                            </div>
+                            <span class="exp-toggle">&#x25BC;</span>
+                        </div>
+                        <div class="exp-body" hidden>
+                            <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Empresa (PT)</label>
+                                    <input class="form-control form-control-sm" name="company" value="{{ exp.company }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Company</label>
+                                    <input class="form-control form-control-sm" name="company_en" value="{{ exp.company_en or '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Cargo (PT)</label>
+                                    <input class="form-control form-control-sm" name="role" value="{{ exp.role }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Role</label>
+                                    <input class="form-control form-control-sm" name="role_en" value="{{ exp.role_en or '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Tipo de contrato</label>
+                                    <select class="form-select form-select-sm" name="contract_type">
+                                        <option value="" {% if not exp.contract_type %}selected{% endif %}>—</option>
+                                        {% for ct in contract_types %}
+                                        <option value="{{ ct }}" {% if exp.contract_type == ct %}selected{% endif %}>{{ ct }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Início</label>
+                                    <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Fim</label>
+                                    <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Ordem</label>
+                                    <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" type="number">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">Descrição (PT)</label>
+                                    <textarea class="form-control form-control-sm" name="description" rows="8">{{ exp.description }}</textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Description</label>
+                                    <textarea class="form-control form-control-sm" name="description_en" rows="8">{{ exp.description_en or '' }}</textarea>
+                                </div>
+                                <div class="col-12 d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm px-4">Salvar</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="if(confirm('Remover?')) this.parentNode.parentNode.nextElementSibling.submit()">Remover</button>
+                                </div>
+                            </form>
+                            <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" style="display:none"></form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
 
             <!-- FORMAÇÃO -->
@@ -322,84 +507,141 @@
                 <h4 class="mb-4">Formação Acadêmica / Cursos</h4>
                 <form method="POST" action="/admin/experiences/add" class="row g-3 mb-5 p-3 bg-light rounded border shadow-sm">
                     <input type="hidden" name="kind" value="education">
-                    <div class="col-md-4">
-                        <label class="form-label">Instituição</label>
+                    <div class="col-md-3">
+                        <label class="form-label">Instituição (PT)</label>
                         <input class="form-control" name="company" placeholder="Ex: UNIME" required>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Curso/Certificação</label>
+                    <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Institution</label>
+                        <input class="form-control" name="company_en" placeholder="Ex: UNIME">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Curso/Certificação (PT)</label>
                         <input class="form-control" name="role" placeholder="Ex: Bacharel em SI" required>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Course/Certification</label>
+                        <input class="form-control" name="role_en" placeholder="Ex: BSc in IS">
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Início</label>
                         <input class="form-control" name="start_date" placeholder="2010">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">Fim</label>
                         <input class="form-control" name="end_date" placeholder="2014">
                     </div>
-                    <div class="col-12">
-                        <label class="form-label">Descrição</label>
-                        <textarea class="form-control" name="description" rows="4" placeholder="Detalhes da formação..."></textarea>
-                    </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">Ordem</label>
                         <input class="form-control" name="sort_order" type="number" value="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Descrição (PT)</label>
+                        <textarea class="form-control" name="description" rows="4"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Description</label>
+                        <textarea class="form-control" name="description_en" rows="4"></textarea>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-success w-100">Adicionar Formação</button>
                     </div>
                 </form>
 
-                <h5 class="mb-3 border-bottom pb-2 text-success">Gerenciar Formação</h5>
-                {% for exp in education %}
-                <div class="card mb-3 border-0 bg-light p-3 shadow-sm border-start border-4 border-success">
-                    <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">Instituição</label>
-                            <input class="form-control form-control-sm" name="company" value="{{ exp.company }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small mb-1">Curso</label>
-                            <input class="form-control form-control-sm" name="role" value="{{ exp.role }}">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small mb-1">Início</label>
-                            <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small mb-1">Fim</label>
-                            <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}">
-                        </div>
-                        <div class="col-md-10">
-                            <label class="form-label small mb-1">Descrição</label>
-                            <textarea class="form-control form-control-sm" name="description" rows="4">{{ exp.description }}</textarea>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small mb-1">Ordem</label>
-                            <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" type="number">
-                        </div>
-                        <div class="col-12 d-flex gap-2">
-                            <button class="btn btn-primary btn-sm px-4">Salvar</button>
-                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="if(confirm('Remover?')) this.parentNode.nextElementSibling.submit()">Remover</button>
-                        </div>
-                    </form>
-                    <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" style="display:none"></form>
+                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                    <h5 class="mb-0 text-success">Gerenciar Formação</h5>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm exp-expand-all" data-target="sortable-education">Expandir todas</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm exp-collapse-all" data-target="sortable-education">Minimizar todas</button>
+                        <form method="POST" action="/admin/experiences/auto-order" onsubmit="return confirm('Reordenar automaticamente pela data?')">
+                            <input type="hidden" name="kind" value="education">
+                            <button class="btn btn-outline-success btn-sm" title="Ordena pela data de fim (mais recente primeiro) e, em empate, pela data de início">
+                                <i class="bi bi-sort-down"></i> Ordenar por data
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                {% endfor %}
+                <p class="small text-muted">Arraste o ícone <strong>&#9776;</strong> para reordenar. Clique no cabeçalho para expandir/minimizar.</p>
+                <div id="sortable-education" class="sortable-list" data-kind="education">
+                    {% for exp in education %}
+                    <div class="exp-card card mb-3 border-0 bg-light shadow-sm border-start border-4 border-success" data-id="{{ exp.id }}">
+                        <div class="exp-header">
+                            <span class="drag-handle" title="Arraste para reordenar">&#9776;</span>
+                            <div class="flex-grow-1">
+                                <div><strong>{{ exp.company or 'Sem instituição' }}</strong> <span class="text-muted">— {{ exp.role }}</span></div>
+                                <div class="exp-summary-meta">{{ exp.start_date or '—' }}{% if exp.end_date %} &middot; {{ exp.end_date }}{% endif %}</div>
+                            </div>
+                            <span class="exp-toggle">&#x25BC;</span>
+                        </div>
+                        <div class="exp-body" hidden>
+                            <form method="POST" action="/admin/experiences/{{ exp.id }}/update" class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Instituição (PT)</label>
+                                    <input class="form-control form-control-sm" name="company" value="{{ exp.company }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Institution</label>
+                                    <input class="form-control form-control-sm" name="company_en" value="{{ exp.company_en or '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Curso (PT)</label>
+                                    <input class="form-control form-control-sm" name="role" value="{{ exp.role }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Course</label>
+                                    <input class="form-control form-control-sm" name="role_en" value="{{ exp.role_en or '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Início</label>
+                                    <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Fim</label>
+                                    <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Ordem</label>
+                                    <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" type="number">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">Descrição (PT)</label>
+                                    <textarea class="form-control form-control-sm" name="description" rows="4">{{ exp.description }}</textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Description</label>
+                                    <textarea class="form-control form-control-sm" name="description_en" rows="4">{{ exp.description_en or '' }}</textarea>
+                                </div>
+                                <div class="col-12 d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm px-4">Salvar</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="if(confirm('Remover?')) this.parentNode.parentNode.nextElementSibling.submit()">Remover</button>
+                                </div>
+                            </form>
+                            <form method="POST" action="/admin/experiences/{{ exp.id }}/delete" style="display:none"></form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
 
             <!-- PORTFÓLIO -->
             <div class="tab-pane fade" id="tab-projects" role="tabpanel">
                 <h4 class="mb-4">Portfólio</h4>
                 <form method="POST" action="/admin/projects/add" class="row g-3 mb-5 p-3 bg-light rounded border shadow-sm" enctype="multipart/form-data">
-                    <div class="col-md-4">
-                        <label class="form-label">Título</label>
+                    <div class="col-md-6">
+                        <label class="form-label">Título (PT)</label>
                         <input class="form-control" name="title" required>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Tecnologias</label>
+                    <div class="col-md-6">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Title</label>
+                        <input class="form-control" name="title_en">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tecnologias (PT)</label>
                         <input class="form-control" name="tech" placeholder="Ex: React, MongoDB">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Technologies</label>
+                        <input class="form-control" name="tech_en">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">URL do Projeto</label>
@@ -410,16 +652,20 @@
                         <input class="form-control" name="repo_url">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">URL Imagem</label>
-                        <input class="form-control" name="image_url">
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Upload Imagem</label>
                         <input class="form-control" name="image_upload" type="file">
                     </div>
                     <div class="col-12">
-                        <label class="form-label">Descrição</label>
+                        <label class="form-label">URL Imagem (opcional)</label>
+                        <input class="form-control" name="image_url">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Descrição (PT)</label>
                         <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><span class="badge bg-secondary">EN</span> Description</label>
+                        <textarea class="form-control" name="description_en" rows="3"></textarea>
                     </div>
                     <div class="col-md-3">
                         <div class="form-check pt-2">
@@ -432,51 +678,95 @@
                     </div>
                 </form>
 
-                <h5 class="mb-3">Gerenciar Projetos</h5>
-                <div class="row">
+                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                    <h5 class="mb-0">Gerenciar Projetos</h5>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm exp-expand-all" data-target="sortable-projects">Expandir todos</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm exp-collapse-all" data-target="sortable-projects">Minimizar todos</button>
+                    </div>
+                </div>
+                <p class="small text-muted">Arraste o ícone <strong>&#9776;</strong> para reordenar. Clique no cabeçalho para expandir/minimizar.</p>
+                <div id="sortable-projects" class="sortable-list" data-reorder-url="/admin/projects/reorder">
                     {% for project in projects %}
-                    <div class="col-md-12 mb-4">
-                        <div class="card shadow-sm border-0 bg-light p-3">
+                    <div class="exp-card card mb-3 border-0 bg-light shadow-sm border-start border-4 {% if project.featured %}border-warning{% else %}border-secondary{% endif %}" data-id="{{ project.id }}">
+                        <div class="exp-header">
+                            <span class="drag-handle" title="Arraste para reordenar">&#9776;</span>
+                            <div class="flex-grow-1">
+                                <div>
+                                    <strong>{{ project.title or 'Sem título' }}</strong>
+                                    {% if project.featured %}<span class="badge bg-warning text-dark ms-1">Destaque</span>{% endif %}
+                                </div>
+                                {% if project.tech %}<div class="exp-summary-meta">{{ project.tech }}</div>{% endif %}
+                            </div>
+                            {% if project.image_url %}
+                                <img src="{{ project.image_url }}" alt="" class="current-image-preview me-2">
+                            {% endif %}
+                            <span class="exp-toggle">&#x25BC;</span>
+                        </div>
+                        <div class="exp-body" hidden>
                             <form method="POST" action="/admin/projects/{{ project.id }}/update" class="row g-3" enctype="multipart/form-data">
-                                <div class="col-md-4">
-                                    <label class="form-label small">Título</label>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">Título (PT)</label>
                                     <input class="form-control form-control-sm" name="title" value="{{ project.title }}">
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small">Tecnologias</label>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Title</label>
+                                    <input class="form-control form-control-sm" name="title_en" value="{{ project.title_en or '' }}">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label small mb-1">Tecnologias (PT)</label>
                                     <input class="form-control form-control-sm" name="tech" value="{{ project.tech }}">
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label small">Featured</label>
+                                    <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Tech</label>
+                                    <input class="form-control form-control-sm" name="tech_en" value="{{ project.tech_en or '' }}">
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="featured" {% if project.featured %}checked{% endif %}>
+                                        <input class="form-check-input" type="checkbox" name="featured" id="feat-{{ project.id }}" {% if project.featured %}checked{% endif %}>
+                                        <label class="form-check-label small" for="feat-{{ project.id }}">Destacar</label>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small">Project URL</label>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">URL do Projeto</label>
                                     <input class="form-control form-control-sm" name="project_url" value="{{ project.project_url }}">
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label small">Repo URL</label>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">URL do Repositório</label>
                                     <input class="form-control form-control-sm" name="repo_url" value="{{ project.repo_url }}">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">Imagem (upload)</label>
+                                    <input class="form-control form-control-sm" name="image_upload" type="file" accept="image/*">
                                     {% if project.image_url %}
-                                        <div class="mb-1"><small>Atual:</small> <a href="{{ project.image_url }}" target="_blank">Ver</a></div>
+                                        <small class="text-muted d-block mt-1">
+                                            Atual:
+                                            {% if (project.image_url or '').startswith('data:') %}
+                                                armazenada no banco
+                                            {% else %}
+                                                <a href="{{ project.image_url }}" target="_blank">ver</a>
+                                            {% endif %}
+                                        </small>
                                     {% endif %}
-                                    <input class="form-control form-control-sm" name="image_upload" type="file">
                                 </div>
-                                <div class="col-md-10">
-                                    <label class="form-label small">Descrição</label>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">URL Imagem (opcional)</label>
+                                    <input class="form-control form-control-sm" name="image_url" value="{% if project.image_url and not project.image_url.startswith('data:') %}{{ project.image_url }}{% endif %}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1">Descrição (PT)</label>
                                     <textarea class="form-control form-control-sm" name="description" rows="4">{{ project.description }}</textarea>
                                 </div>
-                                <div class="col-md-2 d-flex align-items-end gap-2">
-                                    <button class="btn btn-primary btn-sm w-100">Salvar</button>
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Description</label>
+                                    <textarea class="form-control form-control-sm" name="description_en" rows="4">{{ project.description_en or '' }}</textarea>
+                                </div>
+                                <div class="col-12 d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm px-4">Salvar</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="if(confirm('Excluir projeto?')) this.parentNode.parentNode.nextElementSibling.submit()">Remover</button>
                                 </div>
                             </form>
-                            <form method="POST" action="/admin/projects/{{ project.id }}/delete" class="mt-2" onsubmit="return confirm('Excluir projeto?')">
-                                <button class="btn btn-outline-danger btn-sm">Remover</button>
-                            </form>
+                            <form method="POST" action="/admin/projects/{{ project.id }}/delete" style="display:none"></form>
                         </div>
                     </div>
                     {% endfor %}
@@ -527,6 +817,8 @@
     <script src="../static/bootstrap/js/bootstrap.bundle.js"></script>
     <!-- Quill library -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <!-- SortableJS for drag-and-drop reordering -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
     <script>
         // Init Quill for multiple editors
@@ -554,10 +846,76 @@
             });
         }
 
+        function setCardOpen(card, open) {
+            const body = card.querySelector('.exp-body');
+            if (!body) return;
+            card.classList.toggle('is-open', open);
+            if (open) body.removeAttribute('hidden'); else body.setAttribute('hidden', '');
+        }
+
+        function initExpanders() {
+            document.querySelectorAll('.exp-card').forEach(card => {
+                const header = card.querySelector('.exp-header');
+                if (!header || header.dataset.expanderBound) return;
+                header.dataset.expanderBound = '1';
+                header.addEventListener('click', (e) => {
+                    if (e.target.closest('.drag-handle')) return;
+                    setCardOpen(card, !card.classList.contains('is-open'));
+                });
+            });
+            document.querySelectorAll('.exp-expand-all').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const list = document.getElementById(btn.dataset.target);
+                    if (!list) return;
+                    list.querySelectorAll('.exp-card').forEach(c => setCardOpen(c, true));
+                });
+            });
+            document.querySelectorAll('.exp-collapse-all').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const list = document.getElementById(btn.dataset.target);
+                    if (!list) return;
+                    list.querySelectorAll('.exp-card').forEach(c => setCardOpen(c, false));
+                });
+            });
+        }
+
+        function persistOrder(listEl) {
+            const ids = Array.from(listEl.querySelectorAll(':scope > .exp-card'))
+                .map(c => c.dataset.id)
+                .filter(Boolean);
+            if (!ids.length) return;
+            const url = listEl.dataset.reorderUrl || '/admin/experiences/reorder';
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ order: ids })
+            }).then(r => {
+                if (!r.ok) console.error('Falha ao salvar ordem', r.status);
+            }).catch(err => console.error('Erro ao reordenar', err));
+        }
+
+        function initSortables() {
+            if (typeof Sortable === 'undefined') return;
+            document.querySelectorAll('.sortable-list').forEach(list => {
+                if (list.dataset.sortableBound) return;
+                list.dataset.sortableBound = '1';
+                new Sortable(list, {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    onEnd: () => persistOrder(list)
+                });
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
             initQuill('editor-about', 'textarea-about');
+            initQuill('editor-about-en', 'textarea-about-en');
             initQuill('editor-emp-desc1', 'textarea-emp-desc1');
+            initQuill('editor-emp-desc1-en', 'textarea-emp-desc1-en');
             initQuill('editor-emp-desc2', 'textarea-emp-desc2');
+            initQuill('editor-emp-desc2-en', 'textarea-emp-desc2-en');
 
             // Handle forms that use quill
             const forms = ['form-about', 'form-emp'];
@@ -569,6 +927,26 @@
                         return true;
                     };
                 }
+            });
+
+            initExpanders();
+            initSortables();
+
+            // Restaura a aba a partir do hash (ex: #tab-exp) e mantém sincronizada ao trocar
+            function activateTabFromHash() {
+                const hash = window.location.hash;
+                if (!hash) return;
+                const trigger = document.querySelector('[data-bs-toggle="tab"][data-bs-target="' + hash + '"]');
+                if (trigger && typeof bootstrap !== 'undefined') {
+                    bootstrap.Tab.getOrCreateInstance(trigger).show();
+                }
+            }
+            activateTabFromHash();
+            document.querySelectorAll('[data-bs-toggle="tab"]').forEach(btn => {
+                btn.addEventListener('shown.bs.tab', (ev) => {
+                    const target = ev.target.getAttribute('data-bs-target');
+                    if (target) history.replaceState(null, '', target);
+                });
             });
         });
     </script>
