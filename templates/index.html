@@ -9,7 +9,34 @@
     <link rel="stylesheet" href="../static/style.css">
     <link rel="icon" type="image/png" href="../static/img/marmota.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-    <title>ISSQA</title>
+
+    <title>{{ settings.site_name or 'Isaias Silva' }} — {{ settings.site_title or 'QA Lead & Founder' }}</title>
+    <meta name="description" content="{{ settings.site_title or 'QA Lead & Founder | Especialista em Automação e Estratégia de Qualidade' }}">
+    <meta name="author" content="{{ settings.site_name or 'Isaias Silva' }}">
+
+    {% set _pi = settings.profile_image or '' %}
+    {% if _pi.startswith('http') %}
+        {% set share_image = _pi %}
+    {% elif _pi.startswith('data:') %}
+        {% set share_image = request.url_root.rstrip('/') ~ '/static/img/isa-perfil.jpg' %}
+    {% else %}
+        {% set share_image = request.url_root.rstrip('/') ~ _pi %}
+    {% endif %}
+
+    <!-- Open Graph (WhatsApp, Facebook, LinkedIn) -->
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="{{ settings.site_name or 'Isaias Silva' }}">
+    <meta property="og:title" content="{{ settings.site_name or 'Isaias Silva' }}">
+    <meta property="og:description" content="{{ settings.site_title or 'QA Lead & Founder | Especialista em Automação e Estratégia de Qualidade' }}">
+    <meta property="og:image" content="{{ share_image }}">
+    <meta property="og:url" content="{{ request.url_root }}">
+    <meta property="og:locale" content="pt_BR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ settings.site_name or 'Isaias Silva' }}">
+    <meta name="twitter:description" content="{{ settings.site_title or 'QA Lead & Founder' }}">
+    <meta name="twitter:image" content="{{ share_image }}">
 </head>
 
 <body>
