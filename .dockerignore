@@ -1,0 +1,11 @@
+.git
+.env
+.DS_Store
+__pycache__/
+*.py[cod]
+venv/
+node_modules/
+playwright-report/
+test-results/
+.vercel/
+npm-debug.log*
