@@ -277,6 +277,23 @@ i.menu-mobile {
   margin-bottom: 10px;
 }
 
+/* Linha "Empresa - Cargo - Contrato": empresa em destaque, antes do cargo */
+.cv .cv-item h5.cv-role-line {
+  font-weight: 500;
+  color: #3a4656;
+  margin-bottom: 10px;
+}
+
+.cv .cv-item h5.cv-role-line .cv-company {
+  font-weight: 800;
+  color: #1f5297;
+}
+
+.cv .cv-item--personal h5.cv-role-line .cv-company,
+.cv .cv-item--child h5.cv-role-line .cv-company {
+  color: #6d28d9;
+}
+
 .cv .cv-item h6 {
   background: #e4edf9;
   padding: 5px 15px;
@@ -295,6 +312,69 @@ i.menu-mobile {
   border: 2px solid #1f5297;
   background: #fff;
   border-radius: 50%;
+}
+
+/* Projetos pessoais / ISSQA — visual distinto do histórico de emprego */
+.cv .cv-item--personal {
+  border-left: 2px dashed #7c3aed;
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.06), rgba(124, 58, 237, 0));
+  border-radius: 0 8px 8px 0;
+  padding-top: 6px;
+}
+
+.cv .cv-item--personal::before {
+  border-color: #7c3aed;
+  background: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18);
+}
+
+.cv .cv-item--personal h6 {
+  background: #ede4fb;
+}
+
+.cv .cv-badge-personal {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 3px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #fff;
+  background: #7c3aed;
+  border-radius: 999px;
+}
+
+/* Projetos DENTRO da ISSQA (WasteZero, Juntix) — indentados sob a consultoria-mãe */
+.cv .cv-item--child {
+  margin-left: 34px;
+  border-left: 2px dashed #c4b5fd;
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.045), rgba(124, 58, 237, 0));
+}
+
+.cv .cv-item--child::before {          /* nó menor, indica sub-item */
+  width: 11px;
+  height: 11px;
+  left: -6px;
+  border-color: #a78bfa;
+  background: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.18);
+}
+
+.cv .cv-item--child::after {           /* conector horizontal ligando ao tronco da ISSQA */
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: -34px;
+  width: 32px;
+  height: 0;
+  border-top: 2px dashed #c4b5fd;
+}
+
+.cv .cv-badge-child {
+  background: #ede9fe;
+  color: #6d28d9;
+  border: 1px solid #ddd6fe;
 }
 
 .carousel-control-prev{

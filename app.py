@@ -495,10 +495,14 @@ def admin_experiences_add():
     role_en = request.form.get("role_en", "").strip()
     start_date = request.form.get("start_date", "").strip()
     end_date = request.form.get("end_date", "").strip()
+    original_start_date = request.form.get("original_start_date", "").strip()
+    original_end_date = request.form.get("original_end_date", "").strip()
     description = request.form.get("description", "").strip()
     description_en = request.form.get("description_en", "").strip()
     sort_order = request.form.get("sort_order", "0").strip()
     contract_type = request.form.get("contract_type", "").strip()
+    is_personal = request.form.get("is_personal") in ("on", "true", "1")
+    is_child_project = request.form.get("is_child_project") in ("on", "true", "1")
     if contract_type and contract_type not in CONTRACT_TYPES:
         contract_type = ""
 
@@ -513,10 +517,14 @@ def admin_experiences_add():
                 "role_en": role_en,
                 "start_date": start_date,
                 "end_date": end_date,
+                "original_start_date": original_start_date,
+                "original_end_date": original_end_date,
                 "description": description,
                 "description_en": description_en,
                 "sort_order": int(sort_order or 0),
                 "contract_type": contract_type,
+                "is_personal": is_personal,
+                "is_child_project": is_child_project,
             }
         )
         flash("Experiência adicionada.")
@@ -542,10 +550,14 @@ def admin_experiences_update(exp_id):
     role_en = request.form.get("role_en", "").strip()
     start_date = request.form.get("start_date", "").strip()
     end_date = request.form.get("end_date", "").strip()
+    original_start_date = request.form.get("original_start_date", "").strip()
+    original_end_date = request.form.get("original_end_date", "").strip()
     description = request.form.get("description", "").strip()
     description_en = request.form.get("description_en", "").strip()
     sort_order = request.form.get("sort_order", "0").strip()
     contract_type = request.form.get("contract_type", "").strip()
+    is_personal = request.form.get("is_personal") in ("on", "true", "1")
+    is_child_project = request.form.get("is_child_project") in ("on", "true", "1")
     if contract_type and contract_type not in CONTRACT_TYPES:
         contract_type = ""
     kind = None
@@ -563,10 +575,14 @@ def admin_experiences_update(exp_id):
                     "role_en": role_en,
                     "start_date": start_date,
                     "end_date": end_date,
+                    "original_start_date": original_start_date,
+                    "original_end_date": original_end_date,
                     "description": description,
                     "description_en": description_en,
                     "sort_order": int(sort_order or 0),
                     "contract_type": contract_type,
+                    "is_personal": is_personal,
+                    "is_child_project": is_child_project,
                 }
             },
         )
@@ -768,4 +784,7 @@ def send():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "5000"))
+    debug = os.getenv("FLASK_DEBUG", "1").lower() not in ("0", "false", "no")
+    app.run(host=host, port=port, debug=debug)

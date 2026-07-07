@@ -45,6 +45,17 @@
         }
         .exp-header .drag-handle:hover { background: #e9ecef; }
         .exp-header .drag-handle:active { cursor: grabbing; }
+        .border-personal { border-color: #7c3aed !important; }
+        .badge-personal { background: #7c3aed; color: #fff; font-weight: 600; }
+        .border-child { border-color: #a78bfa !important; }
+        .badge-child { background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; font-weight: 600; }
+        .exp-card.is-child { margin-left: 28px; }
+        .exp-orig-date {
+            display: inline-block; margin-left: .5rem; padding: 1px 8px;
+            font-size: .72rem; font-weight: 600; color: #b45309;
+            background: #fef3c7; border: 1px solid #fde68a; border-radius: 999px;
+            white-space: nowrap;
+        }
         .exp-toggle {
             transition: transform .2s ease; color: #6c757d;
         }
@@ -402,6 +413,18 @@
                         <label class="form-label">Ordem</label>
                         <input class="form-control" name="sort_order" type="number" value="0">
                     </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_personal" id="add_is_personal">
+                                <label class="form-check-label" for="add_is_personal">Projeto pessoal (ISSQA)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_child_project" id="add_is_child">
+                                <label class="form-check-label" for="add_is_child">↳ Projeto dentro da ISSQA</label>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <label class="form-label">Descrição (PT)</label>
                         <textarea class="form-control" name="description" rows="5" placeholder="Descreva suas atividades..."></textarea>
@@ -431,15 +454,16 @@
                 <p class="small text-muted">Arraste o ícone <strong>&#9776;</strong> para reordenar. Clique no cabeçalho para expandir/minimizar.</p>
                 <div id="sortable-work" class="sortable-list" data-kind="work">
                     {% for exp in experiences %}
-                    <div class="exp-card card mb-3 border-0 bg-light shadow-sm border-start border-4 border-primary" data-id="{{ exp.id }}">
+                    <div class="exp-card card mb-3 border-0 bg-light shadow-sm border-start border-4 {% if exp.is_child_project %}border-child is-child{% elif exp.is_personal %}border-personal{% else %}border-primary{% endif %}" data-id="{{ exp.id }}">
                         <div class="exp-header">
                             <span class="drag-handle" title="Arraste para reordenar">&#9776;</span>
                             <div class="flex-grow-1">
                                 <div>
                                     <strong>{{ exp.company or 'Sem empresa' }}</strong>
                                     <span class="text-muted">— {{ exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}</span>
+                                    {% if exp.is_child_project %}<span class="badge badge-child ms-1">↳ dentro da ISSQA</span>{% elif exp.is_personal %}<span class="badge badge-personal ms-1">ISSQA · Consultoria</span>{% endif %}
                                 </div>
-                                <div class="exp-summary-meta">{{ exp.start_date or '—' }}{% if exp.end_date %} &middot; {{ exp.end_date }}{% endif %}</div>
+                                <div class="exp-summary-meta">{{ exp.start_date or '—' }}{% if exp.end_date %} &middot; {{ exp.end_date }}{% endif %}{% if exp.original_start_date %}<span class="exp-orig-date" title="Datas reais (LinkedIn) — não aparecem no currículo público">orig.: {{ exp.original_start_date }}{% if exp.original_end_date %} &middot; {{ exp.original_end_date }}{% endif %}</span>{% endif %}</div>
                             </div>
                             <span class="exp-toggle">&#x25BC;</span>
                         </div>
@@ -471,16 +495,36 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label small mb-1">Início</label>
+                                    <label class="form-label small mb-1">Início <span class="text-muted">(público)</span></label>
                                     <input class="form-control form-control-sm" name="start_date" value="{{ exp.start_date }}">
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label small mb-1">Fim</label>
+                                    <label class="form-label small mb-1">Fim <span class="text-muted">(público)</span></label>
                                     <input class="form-control form-control-sm" name="end_date" value="{{ exp.end_date }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Início real <span class="badge-personal badge">só admin</span></label>
+                                    <input class="form-control form-control-sm" name="original_start_date" value="{{ exp.original_start_date or '' }}" placeholder="ex: 02.2014 (LinkedIn)">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Fim real <span class="badge-personal badge">só admin</span></label>
+                                    <input class="form-control form-control-sm" name="original_end_date" value="{{ exp.original_end_date or '' }}" placeholder="ex: 09.2017 (LinkedIn)">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small mb-1">Ordem</label>
                                     <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" type="number">
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="is_personal" id="is_personal_{{ exp.id }}" {% if exp.is_personal %}checked{% endif %}>
+                                            <label class="form-check-label small" for="is_personal_{{ exp.id }}">Projeto pessoal (ISSQA)</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="is_child_project" id="is_child_{{ exp.id }}" {% if exp.is_child_project %}checked{% endif %}>
+                                            <label class="form-check-label small" for="is_child_{{ exp.id }}">↳ Projeto dentro da ISSQA (indentado)</label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small mb-1">Descrição (PT)</label>
@@ -569,7 +613,7 @@
                             <span class="drag-handle" title="Arraste para reordenar">&#9776;</span>
                             <div class="flex-grow-1">
                                 <div><strong>{{ exp.company or 'Sem instituição' }}</strong> <span class="text-muted">— {{ exp.role }}</span></div>
-                                <div class="exp-summary-meta">{{ exp.start_date or '—' }}{% if exp.end_date %} &middot; {{ exp.end_date }}{% endif %}</div>
+                                <div class="exp-summary-meta">{{ exp.start_date or '—' }}{% if exp.end_date %} &middot; {{ exp.end_date }}{% endif %}{% if exp.original_start_date %}<span class="exp-orig-date" title="Datas reais (LinkedIn) — não aparecem no currículo público">orig.: {{ exp.original_start_date }}{% if exp.original_end_date %} &middot; {{ exp.original_end_date }}{% endif %}</span>{% endif %}</div>
                             </div>
                             <span class="exp-toggle">&#x25BC;</span>
                         </div>

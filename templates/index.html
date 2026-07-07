@@ -259,10 +259,14 @@
                     <div class="col-md-12">
                         <h3 class="cv-title" data-i18n="cv-work-title">Experiência Profissional</h3>
                         {% for exp in experiences %}
-                        <div class="cv-item" data-anime="up">
-                            <h5 data-i18n-en="{% if exp.role_en %}{{ exp.role_en }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}{% endif %}">{{ exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}</h5>
-                            <h6>{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% endif %}</h6>
-                            <p><em data-i18n-en="{{ exp.company_en or '' }}">{{ exp.company }}</em></p>
+                        <div class="cv-item{% if exp.is_personal %} cv-item--personal{% endif %}{% if exp.is_child_project %} cv-item--child{% endif %}" data-anime="up">
+                            {% if exp.is_child_project %}
+                            <span class="cv-badge-personal cv-badge-child" data-i18n-en="ISSQA Project">Projeto ISSQA</span>
+                            {% elif exp.is_personal %}
+                            <span class="cv-badge-personal" data-i18n-en="ISSQA · QA &amp; Dev Consultancy">ISSQA · Consultoria QA &amp; Dev</span>
+                            {% endif %}
+                            <h5 class="cv-role-line" data-i18n-en='<span class="cv-company">{{ exp.company_en or exp.company }}</span> - {{ exp.role_en or exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}'><span class="cv-company">{{ exp.company }}</span> - {{ exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}</h5>
+                            <h6>{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% else %} - <span data-i18n-en="Present">Atual</span>{% endif %}</h6>
                             {% if exp.description %}<p data-i18n-en="{{ exp.description_en|e if exp.description_en else '' }}">{{ exp.description }}</p>{% endif %}
                         </div>
                         {% endfor %}
