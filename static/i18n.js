@@ -155,6 +155,7 @@ const translations = {
         "cv-download-title": "Baixar currículo em PDF (ATS-friendly)",
         "cv-download-pt": "Português",
         "cv-download-en": "English",
+        "cv-download-es": "Español",
 
         // Contato
         "contact-title": "Contato",
@@ -325,6 +326,7 @@ const translations = {
         "cv-download-title": "Download resume as PDF (ATS-friendly)",
         "cv-download-pt": "Português",
         "cv-download-en": "English",
+        "cv-download-es": "Español",
 
         // Contato
         "contact-title": "Contact",
@@ -339,6 +341,61 @@ const translations = {
         "contact-form-msg-ph": "Enter your message",
         "contact-form-btn": "Send Message",
         "contact-form-loading": "Sending, please wait!..."
+    },
+    es: {
+        // Menú
+        "menu-inicio": "Inicio",
+        "menu-sobre": "Sobre mí",
+        "menu-habilidades": "Habilidades",
+        "menu-curriculo": "Currículum",
+        "menu-formacao": "Formación",
+        "menu-portfolio": "Portafolio",
+        "menu-contato": "Contacto",
+
+        // Header
+        "header-title": "Isaias Silva",
+        "header-subtitle": "QA Lead & Founder | Especialista en Automatización y Estrategia de Calidad",
+
+        // Sobre mí
+        "sobre-title": "Sobre mí",
+        "sobre-niver": "Cumpleaños",
+        "sobre-idade": "Edad",
+        "sobre-cidade": "Ciudad",
+        "sobre-estado": "Estado",
+        "sobre-hobby": "Hobby",
+        "sobre-trabalho": "Trabajo",
+        "sobre-xp": "Experiencia",
+
+        // Habilidades
+        "hab-title": "Habilidades",
+        "hab-desc": "A lo largo de mi trayectoria como profesional de tecnología adquirí habilidades técnicas y no técnicas. La mayoría de ellas están aquí, según el porcentaje de conocimiento que creo tener en cada una.",
+
+        // Currículum
+        "cv-title": "Currículum",
+        "cv-formation-title": "Formación",
+        "cv-work-title": "Experiencia Profesional",
+        "hero-scroll": "Desliza para ver más",
+        "cv-download-title": "Descargar currículum en PDF (ATS-friendly)",
+        "cv-download-pt": "Português",
+        "cv-download-en": "English",
+        "cv-download-es": "Español",
+
+        // Portafolio
+        "port-title": "Portafolio",
+
+        // Contacto
+        "contact-title": "Contacto",
+        "contact-loc": "Ubicación:",
+        "contact-form-name": "Nombre:",
+        "contact-form-name-ph": "Escribe tu nombre",
+        "contact-form-email": "Email:",
+        "contact-form-email-ph": "Escribe tu email",
+        "contact-form-subject": "Asunto:",
+        "contact-form-subject-ph": "Escribe el asunto",
+        "contact-form-msg": "Mensaje:",
+        "contact-form-msg-ph": "Escribe tu mensaje",
+        "contact-form-btn": "Enviar Mensaje",
+        "contact-form-loading": "Enviando, ¡un momento!..."
     }
 };
 
@@ -346,51 +403,64 @@ document.addEventListener("DOMContentLoaded", () => {
     const langToggleBtn = document.getElementById("lang-toggle");
     if (!langToggleBtn) return;
 
-    let currentLang = localStorage.getItem("issqa-lang") || "pt";
+    const SUPPORTED = ["pt", "en", "es"];
+    const LANG_LABEL = { pt: "🇧🇷 PT", en: "🇺🇸 EN", es: "🇪🇸 ES" };
+    const HTML_LANG = { pt: "pt-br", en: "en", es: "es" };
 
-    // Função para atualizar todos elementos com data-i18n (textos estáticos)
+    let currentLang = localStorage.getItem("issqa-lang") || "pt";
+    if (!SUPPORTED.includes(currentLang)) currentLang = "pt";
+
+    // Busca a chave no idioma atual com fallback en -> pt
+    const t = (lang, key) => {
+        const dict = translations[lang] || {};
+        return dict[key] || (translations.en || {})[key] || (translations.pt || {})[key] || null;
+    };
+
     const applyTranslations = (lang) => {
+        // Textos estáticos deste arquivo (data-i18n)
         document.querySelectorAll("[data-i18n]").forEach(element => {
             const key = element.getAttribute("data-i18n");
-
-            // Tratamento especial para placeholders
+            const value = t(lang, key);
             if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
-                if (element.placeholder && translations[lang][key]) {
-                    element.placeholder = translations[lang][key];
+                if (element.placeholder && value) {
+                    element.placeholder = value;
                 }
-            } else if (translations[lang][key]) {
-                element.innerHTML = translations[lang][key];
+            } else if (value) {
+                element.innerHTML = value;
             }
         });
 
-        // data-i18n-en: valor EN vem embutido direto no atributo (do banco)
-        // data-i18n-db: fallback para chaves estáticas deste i18n.js
+        // Conteúdo dinâmico do banco: data-i18n-en / data-i18n-es embutidos no atributo.
+        // data-i18n-db: fallback para chaves estáticas deste i18n.js.
         // Em PT sempre usa o conteúdo original renderizado pelo servidor.
-        document.querySelectorAll("[data-i18n-en], [data-i18n-db]").forEach(element => {
+        document.querySelectorAll("[data-i18n-en], [data-i18n-es], [data-i18n-db]").forEach(element => {
             if (element.dataset.i18nOriginal === undefined) {
                 element.dataset.i18nOriginal = element.innerHTML;
             }
             let replacement = null;
-            if (lang === "en") {
-                const enText = element.getAttribute("data-i18n-en");
-                if (enText && enText.trim()) {
-                    replacement = enText;
+            if (lang !== "pt") {
+                const attrText = element.getAttribute("data-i18n-" + lang);
+                if (attrText && attrText.trim()) {
+                    replacement = attrText;
                 } else {
                     const key = element.getAttribute("data-i18n-db");
-                    if (key && translations.en[key]) replacement = translations.en[key];
+                    if (key) replacement = t(lang, key);
                 }
             }
             element.innerHTML = replacement || element.dataset.i18nOriginal;
         });
 
-        // Define o atributo lang do documento
-        document.documentElement.lang = lang === "pt" ? "pt-br" : "en";
+        // Atributo lang do documento e rótulo do seletor
+        document.documentElement.lang = HTML_LANG[lang];
+        langToggleBtn.innerHTML = LANG_LABEL[lang];
 
-        // Atualiza o texto do botão
-        langToggleBtn.innerHTML = lang === "pt" ? "🇺🇸 English" : "🇧🇷 Português";
+        // Marca o idioma ativo no menu
+        document.querySelectorAll(".lang-menu [data-lang]").forEach(item => {
+            item.classList.toggle("active", item.getAttribute("data-lang") === lang);
+        });
 
         // Botão do menu "Currículo" continua rolando para a seção #curriculo;
-        // o download do PDF fica na seção (modal/botões lado a lado).
+        // o download do PDF fica na seção (botões lado a lado).
         const resumeBtn = document.getElementById("download-resume-btn");
         if (resumeBtn) {
             resumeBtn.href = "#curriculo";
@@ -402,10 +472,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Aplicação inicial
     applyTranslations(currentLang);
 
-    // Listener do Botão
-    langToggleBtn.addEventListener("click", () => {
-        currentLang = currentLang === "pt" ? "en" : "pt";
-        localStorage.setItem("issqa-lang", currentLang);
-        applyTranslations(currentLang);
+    // Listeners do menu de idiomas
+    document.querySelectorAll(".lang-menu [data-lang]").forEach(item => {
+        item.addEventListener("click", () => {
+            currentLang = item.getAttribute("data-lang");
+            localStorage.setItem("issqa-lang", currentLang);
+            applyTranslations(currentLang);
+        });
     });
 });

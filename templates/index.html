@@ -43,9 +43,16 @@
 
     <i class="bi bi-list menu-mobile"></i>
 
-    <!-- Botão de tradução -->
-    <button id="lang-toggle" class="btn position-fixed top-0 end-0 m-3 lang-toggle">🇺🇸
-        English</button>
+    <!-- Seletor de idioma -->
+    <div class="dropdown lang-switch">
+        <button id="lang-toggle" class="btn lang-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">🇧🇷 PT</button>
+        <ul class="dropdown-menu dropdown-menu-end lang-menu">
+            <li><button class="dropdown-item" type="button" data-lang="pt">🇧🇷 Português</button></li>
+            <li><button class="dropdown-item" type="button" data-lang="en">🇺🇸 English</button></li>
+            <li><button class="dropdown-item" type="button" data-lang="es">🇪🇸 Español</button></li>
+        </ul>
+    </div>
 
     <aside id="header">
         <section class="profile">
@@ -107,7 +114,7 @@
         <section id="inicio" style="background-image: url('{{ settings.background_image }}');">
             <div class="hero-text">
                 <h2 class="text-white text-shadow">{{ settings.site_name }}</h2>
-                <span id="subtitle" class="text-white text-shadow" data-i18n-en="{{ settings.site_title_en }}">{{ settings.site_title }}</span>
+                <span id="subtitle" class="text-white text-shadow" data-i18n-en="{{ settings.site_title_en }}" data-i18n-es="{{ settings.site_title_es }}">{{ settings.site_title }}</span>
             </div>
 
             <div id="arraste" class="d-flex align-items-center">
@@ -121,7 +128,7 @@
             <div class="row w-100">
                 <div class="col-md-12" data-anime="down">
                     <h2 class='pt-3' data-i18n="sobre-title">Sobre</h2>
-                    <p data-i18n-en="{{ about_en|e }}">{{ about|safe }}</p>
+                    <p data-i18n-en="{{ about_en|e }}" data-i18n-es="{{ about_es|e }}">{{ about|safe }}</p>
                 </div>
             </div>
 
@@ -131,8 +138,8 @@
                         data-anime="left">
                 </div>
                 <div class="col-md-8" data-anime="right">
-                    <h3 data-i18n-en="{{ settings.emp_title_en }}">{{ settings.emp_title }}</h3>
-                    <div data-i18n-en="{{ settings.emp_desc1_en|e }}">
+                    <h3 data-i18n-en="{{ settings.emp_title_en }}" data-i18n-es="{{ settings.emp_title_es }}">{{ settings.emp_title }}</h3>
+                    <div data-i18n-en="{{ settings.emp_desc1_en|e }}" data-i18n-es="{{ settings.emp_desc1_es|e }}">
                         {{ settings.emp_desc1|safe }}
                     </div>
 
@@ -140,16 +147,16 @@
                         <div class="col-md-6">
                             <ul class="list-group list-group-flush fs-5">
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-niver">Niver</span>: <span class="fw-lighter" data-i18n-en="{{ settings.emp_niver_en }}">{{ settings.emp_niver }}</span>
+                                    <span data-i18n="sobre-niver">Niver</span>: <span class="fw-lighter" data-i18n-en="{{ settings.emp_niver_en }}" data-i18n-es="{{ settings.emp_niver_es }}">{{ settings.emp_niver }}</span>
                                 </li>
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-idade">Idade</span>: <span class="fw-lighter" data-i18n-en="{{ settings.emp_idade_en }}">{{ settings.emp_idade }}</span>
+                                    <span data-i18n="sobre-idade">Idade</span>: <span class="fw-lighter" data-i18n-en="{{ settings.emp_idade_en }}" data-i18n-es="{{ settings.emp_idade_es }}">{{ settings.emp_idade }}</span>
                                 </li>
                                 <li class="list-group-item">
                                     <span data-i18n="sobre-cidade">Cidade</span>: <span class="fw-lighter">{{ settings.emp_cidade }}</span>
                                 </li>
                                 <li class="list-group-item">
-                                    <span data-i18n="sobre-estado">Estado</span>: <span class="fw-lighter" data-i18n-en="{{ settings.emp_estado_en }}">{{ settings.emp_estado }}</span>
+                                    <span data-i18n="sobre-estado">Estado</span>: <span class="fw-lighter" data-i18n-en="{{ settings.emp_estado_en }}" data-i18n-es="{{ settings.emp_estado_es }}">{{ settings.emp_estado }}</span>
                                 </li>
 
                             </ul>
@@ -157,15 +164,15 @@
                         <div class="col-md-6">
                             <ul class="list-group list-group-flush fs-5">
                                 <li class="list-group-item"><span data-i18n="sobre-hobby">Hobby</span>: <span
-                                        class="fw-lighter" data-i18n-en="{{ settings.emp_hobby_en }}">{{ settings.emp_hobby }}</span></li>
+                                        class="fw-lighter" data-i18n-en="{{ settings.emp_hobby_en }}" data-i18n-es="{{ settings.emp_hobby_es }}">{{ settings.emp_hobby }}</span></li>
                                 <li class="list-group-item">Site: <a href="{{ settings.emp_site_url }}"
                                         target="_blank"
                                         class="fw-lighter text-decoration-none link-dark">{{ settings.emp_site }}</a></li>
                                 <li class="list-group-item"><span data-i18n="sobre-trabalho">Trabalho</span>: <a
                                         href="{{ settings.emp_trabalho_url }}" target="_blank"
-                                        class="fw-lighter text-decoration-none link-dark" data-i18n-en="{{ settings.emp_trabalho_en }}">{{ settings.emp_trabalho }}</a></li>
+                                        class="fw-lighter text-decoration-none link-dark" data-i18n-en="{{ settings.emp_trabalho_en }}" data-i18n-es="{{ settings.emp_trabalho_es }}">{{ settings.emp_trabalho }}</a></li>
                                 <li class="list-group-item"><span data-i18n="sobre-xp">Experiência</span>: <span
-                                        class="fw-lighter" data-i18n-en="{{ settings.emp_xp_en }}"> {{ settings.emp_xp }} </span></li>
+                                        class="fw-lighter" data-i18n-en="{{ settings.emp_xp_en }}" data-i18n-es="{{ settings.emp_xp_es }}"> {{ settings.emp_xp }} </span></li>
 
                             </ul>
                         </div>
@@ -175,7 +182,7 @@
 
             <div class="row mt-3">
                 <div class="col-12" data-anime="up">
-                    <div data-i18n-en="{{ settings.emp_desc2_en|e }}">
+                    <div data-i18n-en="{{ settings.emp_desc2_en|e }}" data-i18n-es="{{ settings.emp_desc2_es|e }}">
                         {{ settings.emp_desc2|safe }}
                     </div>
                 </div>
@@ -199,7 +206,7 @@
                     <div class="col-md-6">
                         {% for skill in skills %}
                             {% if loop.index0 % 2 == 0 %}
-                                <p class="mt-3 mb-0" data-i18n-en="{{ skill.name_en or '' }}">{{ skill.name }}</p>
+                                <p class="mt-3 mb-0" data-i18n-en="{{ skill.name_en or '' }}" data-i18n-es="{{ skill.name_es or '' }}">{{ skill.name }}</p>
                                 <div class="progress">
                                     <div class="progress-bar" data-anime="left" role="progressbar"
                                         style="width: {{ skill.level }}%;"
@@ -213,7 +220,7 @@
                     <div class="col-md-6">
                         {% for skill in skills %}
                             {% if loop.index0 % 2 == 1 %}
-                                <p class="mt-3 mb-0" data-i18n-en="{{ skill.name_en or '' }}">{{ skill.name }}</p>
+                                <p class="mt-3 mb-0" data-i18n-en="{{ skill.name_en or '' }}" data-i18n-es="{{ skill.name_es or '' }}">{{ skill.name }}</p>
                                 <div class="progress">
                                     <div class="progress-bar" data-anime="left" role="progressbar"
                                         style="width: {{ skill.level }}%;"
@@ -244,12 +251,15 @@
                                 <div class="text-muted small">ISSQA Master Template 2026</div>
                             </div>
                         </div>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 flex-wrap">
                             <a class="btn btn-outline-primary" href="/static/Isaias_Silva_Resume.pdf" target="_blank" download>
                                 🇧🇷 <span data-i18n="cv-download-pt">Português</span>
                             </a>
                             <a class="btn btn-primary" href="/static/Isaias_Silva_Resume_EN.pdf" target="_blank" download>
                                 🇺🇸 <span data-i18n="cv-download-en">English</span>
+                            </a>
+                            <a class="btn btn-outline-primary" href="/static/Isaias_Silva_Resume_ES.pdf" target="_blank" download>
+                                🇪🇸 <span data-i18n="cv-download-es">Español</span>
                             </a>
                         </div>
                     </div>
@@ -261,13 +271,13 @@
                         {% for exp in experiences %}
                         <div class="cv-item{% if exp.is_personal %} cv-item--personal{% endif %}{% if exp.is_child_project %} cv-item--child{% endif %}" data-anime="up">
                             {% if exp.is_child_project %}
-                            <span class="cv-badge-personal cv-badge-child" data-i18n-en="ISSQA Project">Projeto ISSQA</span>
+                            <span class="cv-badge-personal cv-badge-child" data-i18n-en="ISSQA Project" data-i18n-es="Proyecto ISSQA">Projeto ISSQA</span>
                             {% elif exp.is_personal %}
-                            <span class="cv-badge-personal" data-i18n-en="ISSQA · QA &amp; Dev Consultancy">ISSQA · Consultoria QA &amp; Dev</span>
+                            <span class="cv-badge-personal" data-i18n-en="ISSQA · QA &amp; Dev Consultancy" data-i18n-es="ISSQA · Consultoría QA &amp; Dev">ISSQA · Consultoria QA &amp; Dev</span>
                             {% endif %}
-                            <h5 class="cv-role-line" data-i18n-en='<span class="cv-company">{{ exp.company_en or exp.company }}</span> - {{ exp.role_en or exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}'><span class="cv-company">{{ exp.company }}</span> - {{ exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}</h5>
-                            <h6>{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% else %} - <span data-i18n-en="Present">Atual</span>{% endif %}</h6>
-                            {% if exp.description %}<p data-i18n-en="{{ exp.description_en|e if exp.description_en else '' }}">{{ exp.description }}</p>{% endif %}
+                            <h5 class="cv-role-line" data-i18n-en='<span class="cv-company">{{ exp.company_en or exp.company }}</span> - {{ exp.role_en or exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}' data-i18n-es='<span class="cv-company">{{ exp.company_es or exp.company }}</span> - {{ exp.role_es or exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}'><span class="cv-company">{{ exp.company }}</span> - {{ exp.role }}{% if exp.contract_type %} - {{ exp.contract_type }}{% endif %}</h5>
+                            <h6>{{ exp.start_date }}{% if exp.end_date %} - {{ exp.end_date }}{% else %} - <span data-i18n-en="Present" data-i18n-es="Actual">Atual</span>{% endif %}</h6>
+                            {% if exp.description %}<p data-i18n-en="{{ exp.description_en|e if exp.description_en else '' }}" data-i18n-es="{{ exp.description_es|e if exp.description_es else '' }}">{{ exp.description }}</p>{% endif %}
                         </div>
                         {% endfor %}
                     </div>
@@ -283,10 +293,10 @@
                     <div class="col-md-12">
                         {% for edu in education %}
                         <div class="cv-item" data-anime="up">
-                            <h5 data-i18n-en="{{ edu.role_en or '' }}">{{ edu.role }}</h5>
+                            <h5 data-i18n-en="{{ edu.role_en or '' }}" data-i18n-es="{{ edu.role_es or '' }}">{{ edu.role }}</h5>
                             <h6>{{ edu.start_date }}{% if edu.end_date %} - {{ edu.end_date }}{% endif %}</h6>
-                            <p><em data-i18n-en="{{ edu.company_en or '' }}">{{ edu.company }}</em></p>
-                            {% if edu.description %}<p data-i18n-en="{{ edu.description_en|e if edu.description_en else '' }}">{{ edu.description }}</p>{% endif %}
+                            <p><em data-i18n-en="{{ edu.company_en or '' }}" data-i18n-es="{{ edu.company_es or '' }}">{{ edu.company }}</em></p>
+                            {% if edu.description %}<p data-i18n-en="{{ edu.description_en|e if edu.description_en else '' }}" data-i18n-es="{{ edu.description_es|e if edu.description_es else '' }}">{{ edu.description }}</p>{% endif %}
                         </div>
                         {% endfor %}
                     </div>
@@ -299,7 +309,7 @@
             <div class="container pb-5 pt-5" data-anime="left">
                 <h2 class="pb-4" data-i18n="port-title">Portfólio</h2>
 
-                <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="row row-cols-1 row-cols-lg-2 g-4">
                     {% for project in projects %}
                     <div class="col">
                         <div class="card h-100">
@@ -307,9 +317,9 @@
                                 <img src="{{ project.image_url }}" class="card-img-top img-fluid w-100" alt="{{ project.title }}">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title" data-i18n-en="{{ project.title_en or '' }}">{{ project.title }}</h5>
-                                {% if project.description %}<p class="card-text" data-i18n-en="{{ project.description_en|e if project.description_en else '' }}">{{ project.description }}</p>{% endif %}
-                                {% if project.tech %}<p class="text-muted" data-i18n-en="{{ project.tech_en or '' }}">{{ project.tech }}</p>{% endif %}
+                                <h5 class="card-title" data-i18n-en="{{ project.title_en or '' }}" data-i18n-es="{{ project.title_es or '' }}">{{ project.title }}</h5>
+                                {% if project.description %}<p class="card-text" data-i18n-en="{{ project.description_en|e if project.description_en else '' }}" data-i18n-es="{{ project.description_es|e if project.description_es else '' }}">{{ project.description }}</p>{% endif %}
+                                {% if project.tech %}<p class="text-muted" data-i18n-en="{{ project.tech_en or '' }}" data-i18n-es="{{ project.tech_es or '' }}">{{ project.tech }}</p>{% endif %}
                                 <div class="d-flex justify-content-center gap-2">
                                     {% if project.project_url %}
                                         <a href="{{ project.project_url }}" target='_blank' class="btn btn-outline-primary"><i class="bi bi-link-45deg"></i></a>
@@ -383,7 +393,7 @@
                                 </div>
 
 
-                                <div class="col-12 d-flex justify-content-center mt-4 gap-2">
+                                <div class="col-12 d-flex justify-content-center mt-4 gap-2 flex-wrap">
                                     <button id='btn-enviar' type="submit" class="btn btn-primary"
                                         data-i18n="contact-form-btn">
                                         Enviar Mensagem

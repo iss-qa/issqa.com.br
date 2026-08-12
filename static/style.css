@@ -7,6 +7,10 @@ body {
     height: 100%;
   }
 
+body {
+    overflow-x: hidden; /* animações data-anime deslocam elementos para fora da viewport */
+}
+
 #header {
     position: fixed;
     top: 0;
@@ -114,6 +118,23 @@ body {
     font-weight: 600;
 }
 
+.lang-switch {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+}
+
+.lang-menu {
+    min-width: 10rem;
+}
+
+.lang-menu .dropdown-item.active,
+.lang-menu .dropdown-item:active {
+    background-color: #149ddd;
+    color: #fff;
+}
+
 .lang-toggle {
     z-index: 1000;
     background-color: rgba(2, 17, 36, 0.85);
@@ -218,6 +239,16 @@ i.menu-mobile {
     }
     i.menu-mobile{
       display: flex;
+    }
+    /* No mobile o hambúrguer ocupa o canto direito: o seletor de idioma
+       desliza para a esquerda dele, sem sobreposição */
+    .lang-switch {
+      top: 1rem;
+      right: 4.6rem;
+    }
+    /* background-attachment: fixed trava/serrilha em iOS e Android */
+    section#inicio {
+      background-attachment: scroll;
     }
     section#inicio .hero-text {
       right: 4%;
@@ -392,7 +423,30 @@ i.menu-mobile {
 }
 
 .card {
-  height: 600px; /* ou qualquer outra altura desejada */
+  height: auto;
+}
+
+/* Portfólio em 2 colunas: imagens uniformes e cards alinhados */
+#portfolio .card {
+  border: 0;
+  box-shadow: 0 4px 18px rgba(2, 17, 36, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+#portfolio .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(2, 17, 36, 0.14);
+}
+
+#portfolio .card-img-top {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center top;
+}
+
+#portfolio .card-text {
+  text-align: justify;
 }
 
 /* Animação */

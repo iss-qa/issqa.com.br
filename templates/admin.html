@@ -130,6 +130,10 @@
                             <input class="form-control" name="site_title_en" value="{{ settings.site_title_en }}" placeholder="QA Lead, Test Automation, Entrepreneur">
                         </div>
                         <div class="col-md-6 mb-3">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Títulos/Cargos</label>
+                            <input class="form-control" name="site_title_es" value="{{ settings.site_title_es }}" placeholder="QA Lead, Automatización de Pruebas, Emprendedor">
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label class="form-label">E-mail de contato</label>
                             <input class="form-control" name="contact_email" value="{{ settings.contact_email }}">
                         </div>
@@ -190,6 +194,11 @@
                         <div id="editor-about-en" class="bg-white"></div>
                         <textarea name="about_content_en" id="textarea-about-en" style="display:none">{{ about_en }}</textarea>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Contenido en español</label>
+                        <div id="editor-about-es" class="bg-white"></div>
+                        <textarea name="about_content_es" id="textarea-about-es" style="display:none">{{ about_es }}</textarea>
+                    </div>
                     <button class="btn btn-primary px-4">Salvar</button>
                 </form>
             </div>
@@ -207,6 +216,10 @@
                             <label class="form-label"><span class="badge bg-secondary">EN</span> Section title</label>
                             <input class="form-control" name="emp_title_en" value="{{ settings.emp_title_en }}" placeholder="Entrepreneurship">
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Título de la sección</label>
+                            <input class="form-control" name="emp_title_es" value="{{ settings.emp_title_es }}" placeholder="Emprendedor">
+                        </div>
                         <div class="col-12">
                             <label class="form-label">Texto de introdução — p1 (PT)</label>
                             <div id="editor-emp-desc1" class="bg-white"></div>
@@ -218,6 +231,11 @@
                             <textarea name="emp_desc1_en" id="textarea-emp-desc1-en" style="display:none">{{ settings.emp_desc1_en }}</textarea>
                         </div>
                         <div class="col-12">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Párrafo de introducción (p1)</label>
+                            <div id="editor-emp-desc1-es" class="bg-white"></div>
+                            <textarea name="emp_desc1_es" id="textarea-emp-desc1-es" style="display:none">{{ settings.emp_desc1_es }}</textarea>
+                        </div>
+                        <div class="col-12">
                             <label class="form-label">Texto final — p2 (PT)</label>
                             <div id="editor-emp-desc2" class="bg-white"></div>
                             <textarea name="emp_desc2" id="textarea-emp-desc2" style="display:none">{{ settings.emp_desc2 }}</textarea>
@@ -226,6 +244,11 @@
                             <label class="form-label"><span class="badge bg-secondary">EN</span> Closing paragraph (p2)</label>
                             <div id="editor-emp-desc2-en" class="bg-white"></div>
                             <textarea name="emp_desc2_en" id="textarea-emp-desc2-en" style="display:none">{{ settings.emp_desc2_en }}</textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Párrafo final (p2)</label>
+                            <div id="editor-emp-desc2-es" class="bg-white"></div>
+                            <textarea name="emp_desc2_es" id="textarea-emp-desc2-es" style="display:none">{{ settings.emp_desc2_es }}</textarea>
                         </div>
                     </div>
 
@@ -240,12 +263,20 @@
                             <input class="form-control" name="emp_niver_en" value="{{ settings.emp_niver_en }}" placeholder="September 14, 1989">
                         </div>
                         <div class="col-md-4">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Cumpleaños</label>
+                            <input class="form-control" name="emp_niver_es" value="{{ settings.emp_niver_es }}" placeholder="14 de septiembre de 1989">
+                        </div>
+                        <div class="col-md-4">
                             <label class="form-label">Idade (PT)</label>
                             <input class="form-control" name="emp_idade" value="{{ settings.emp_idade }}" placeholder="36 anos">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label"><span class="badge bg-secondary">EN</span> Age</label>
                             <input class="form-control" name="emp_idade_en" value="{{ settings.emp_idade_en }}" placeholder="36 years old">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Edad</label>
+                            <input class="form-control" name="emp_idade_es" value="{{ settings.emp_idade_es }}" placeholder="36 años">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Cidade</label>
@@ -260,6 +291,10 @@
                             <input class="form-control" name="emp_estado_en" value="{{ settings.emp_estado_en }}" placeholder="Bahia, BR">
                         </div>
                         <div class="col-md-4">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Estado</label>
+                            <input class="form-control" name="emp_estado_es" value="{{ settings.emp_estado_es }}" placeholder="Bahía, BR">
+                        </div>
+                        <div class="col-md-4">
                             <label class="form-label">Hobby (PT)</label>
                             <input class="form-control" name="emp_hobby" value="{{ settings.emp_hobby }}">
                         </div>
@@ -268,12 +303,20 @@
                             <input class="form-control" name="emp_hobby_en" value="{{ settings.emp_hobby_en }}" placeholder="Traveling">
                         </div>
                         <div class="col-md-4">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Hobby</label>
+                            <input class="form-control" name="emp_hobby_es" value="{{ settings.emp_hobby_es }}" placeholder="Viajar">
+                        </div>
+                        <div class="col-md-4">
                             <label class="form-label">Experiência (PT)</label>
                             <input class="form-control" name="emp_xp" value="{{ settings.emp_xp }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label"><span class="badge bg-secondary">EN</span> Experience</label>
                             <input class="form-control" name="emp_xp_en" value="{{ settings.emp_xp_en }}" placeholder="+10 years">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Experiencia</label>
+                            <input class="form-control" name="emp_xp_es" value="{{ settings.emp_xp_es }}" placeholder="+15 años">
                         </div>
                     </div>
 
@@ -294,6 +337,10 @@
                         <div class="col-md-6">
                             <label class="form-label"><span class="badge bg-secondary">EN</span> Work label</label>
                             <input class="form-control" name="emp_trabalho_en" value="{{ settings.emp_trabalho_en }}" placeholder="CEO - ISSQA">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Trabajo</label>
+                            <input class="form-control" name="emp_trabalho_es" value="{{ settings.emp_trabalho_es }}" placeholder="CEO - ISSQA">
                         </div>
                         <div class="col-md-12">
                             <label class="form-label">Trabalho (URL)</label>
@@ -317,16 +364,20 @@
                         <label class="form-label"><span class="badge bg-secondary">EN</span> Name</label>
                         <input class="form-control" name="name_en" placeholder="Ex: Test Automation">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Nombre</label>
+                        <input class="form-control" name="name_es" placeholder="Ej: Automatización de Pruebas">
+                    </div>
+                    <div class="col-md-1">
                         <label class="form-label">Nível (%)</label>
                         <input class="form-control" name="level" type="number" min="1" max="100" placeholder="95" required>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <label class="form-label">Ícone</label>
-                        <input class="form-control" name="icon" placeholder="bi bi-check-circle">
+                        <input class="form-control" name="icon" placeholder="bi bi-check">
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button class="btn btn-success w-100">Adicionar</button>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button class="btn btn-success w-100">+</button>
                     </div>
                 </form>
                 <div class="table-responsive">
@@ -342,16 +393,19 @@
                             <tr>
                                 <td>
                                     <form method="POST" action="/admin/skills/{{ skill.id }}/update" class="row g-2">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <input class="form-control form-control-sm" name="name" value="{{ skill.name }}" placeholder="PT">
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <input class="form-control form-control-sm" name="name_en" value="{{ skill.name_en or '' }}" placeholder="EN">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input class="form-control form-control-sm" name="name_es" value="{{ skill.name_es or '' }}" placeholder="ES">
                                         </div>
                                         <div class="col-md-1">
                                             <input class="form-control form-control-sm" name="level" type="number" min="1" max="100" value="{{ skill.level }}">
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
                                             <input class="form-control form-control-sm" name="icon" value="{{ skill.icon }}" placeholder="ícone">
                                         </div>
                                         <div class="col-md-1">
@@ -385,12 +439,20 @@
                         <input class="form-control" name="company_en" placeholder="(opcional)">
                     </div>
                     <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Empresa</label>
+                        <input class="form-control" name="company_es" placeholder="(opcional)">
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Cargo (PT)</label>
                         <input class="form-control" name="role" placeholder="Ex: Senior QA" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><span class="badge bg-secondary">EN</span> Role</label>
                         <input class="form-control" name="role_en" placeholder="Ex: Senior QA Engineer">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Cargo</label>
+                        <input class="form-control" name="role_es" placeholder="Ej: Ingeniero QA Sénior">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Tipo de contrato</label>
@@ -425,13 +487,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">Descrição (PT)</label>
                         <textarea class="form-control" name="description" rows="5" placeholder="Descreva suas atividades..."></textarea>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label"><span class="badge bg-secondary">EN</span> Description</label>
                         <textarea class="form-control" name="description_en" rows="5" placeholder="Describe your activities..."></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Descripción</label>
+                        <textarea class="form-control" name="description_es" rows="5" placeholder="Describe tus actividades..."></textarea>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-success w-100">Adicionar Experiência</button>
@@ -478,12 +544,20 @@
                                     <input class="form-control form-control-sm" name="company_en" value="{{ exp.company_en or '' }}">
                                 </div>
                                 <div class="col-md-3">
+                                    <label class="form-label small mb-1"><span class="badge bg-warning text-dark">ES</span> Empresa</label>
+                                    <input class="form-control form-control-sm" name="company_es" value="{{ exp.company_es or '' }}">
+                                </div>
+                                <div class="col-md-3">
                                     <label class="form-label small mb-1">Cargo (PT)</label>
                                     <input class="form-control form-control-sm" name="role" value="{{ exp.role }}">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Role</label>
                                     <input class="form-control form-control-sm" name="role_en" value="{{ exp.role_en or '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1"><span class="badge bg-warning text-dark">ES</span> Cargo</label>
+                                    <input class="form-control form-control-sm" name="role_es" value="{{ exp.role_es or '' }}">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small mb-1">Tipo de contrato</label>
@@ -526,13 +600,17 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label small mb-1">Descrição (PT)</label>
                                     <textarea class="form-control form-control-sm" name="description" rows="8">{{ exp.description }}</textarea>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Description</label>
                                     <textarea class="form-control form-control-sm" name="description_en" rows="8">{{ exp.description_en or '' }}</textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small mb-1"><span class="badge bg-warning text-dark">ES</span> Descripción</label>
+                                    <textarea class="form-control form-control-sm" name="description_es" rows="8">{{ exp.description_es or '' }}</textarea>
                                 </div>
                                 <div class="col-12 d-flex gap-2">
                                     <button class="btn btn-primary btn-sm px-4">Salvar</button>
@@ -560,12 +638,20 @@
                         <input class="form-control" name="company_en" placeholder="Ex: UNIME">
                     </div>
                     <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Institución</label>
+                        <input class="form-control" name="company_es" placeholder="Ej: UNIME">
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Curso/Certificação (PT)</label>
                         <input class="form-control" name="role" placeholder="Ex: Bacharel em SI" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><span class="badge bg-secondary">EN</span> Course/Certification</label>
                         <input class="form-control" name="role_en" placeholder="Ex: BSc in IS">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Curso/Certificación</label>
+                        <input class="form-control" name="role_es" placeholder="Ej: Lic. en SI">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Início</label>
@@ -579,13 +665,17 @@
                         <label class="form-label">Ordem</label>
                         <input class="form-control" name="sort_order" type="number" value="0">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">Descrição (PT)</label>
                         <textarea class="form-control" name="description" rows="4"></textarea>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label"><span class="badge bg-secondary">EN</span> Description</label>
                         <textarea class="form-control" name="description_en" rows="4"></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Descripción</label>
+                        <textarea class="form-control" name="description_es" rows="4"></textarea>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-success w-100">Adicionar Formação</button>
@@ -628,12 +718,20 @@
                                     <input class="form-control form-control-sm" name="company_en" value="{{ exp.company_en or '' }}">
                                 </div>
                                 <div class="col-md-3">
+                                    <label class="form-label small mb-1"><span class="badge bg-warning text-dark">ES</span> Institución</label>
+                                    <input class="form-control form-control-sm" name="company_es" value="{{ exp.company_es or '' }}">
+                                </div>
+                                <div class="col-md-3">
                                     <label class="form-label small mb-1">Curso (PT)</label>
                                     <input class="form-control form-control-sm" name="role" value="{{ exp.role }}">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Course</label>
                                     <input class="form-control form-control-sm" name="role_en" value="{{ exp.role_en or '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1"><span class="badge bg-warning text-dark">ES</span> Curso</label>
+                                    <input class="form-control form-control-sm" name="role_es" value="{{ exp.role_es or '' }}">
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small mb-1">Início</label>
@@ -647,13 +745,17 @@
                                     <label class="form-label small mb-1">Ordem</label>
                                     <input class="form-control form-control-sm" name="sort_order" value="{{ exp.sort_order }}" type="number">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label small mb-1">Descrição (PT)</label>
                                     <textarea class="form-control form-control-sm" name="description" rows="4">{{ exp.description }}</textarea>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Description</label>
                                     <textarea class="form-control form-control-sm" name="description_en" rows="4">{{ exp.description_en or '' }}</textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small mb-1"><span class="badge bg-warning text-dark">ES</span> Descripción</label>
+                                    <textarea class="form-control form-control-sm" name="description_es" rows="4">{{ exp.description_es or '' }}</textarea>
                                 </div>
                                 <div class="col-12 d-flex gap-2">
                                     <button class="btn btn-primary btn-sm px-4">Salvar</button>
@@ -680,12 +782,20 @@
                         <input class="form-control" name="title_en">
                     </div>
                     <div class="col-md-6">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Título</label>
+                        <input class="form-control" name="title_es">
+                    </div>
+                    <div class="col-md-6">
                         <label class="form-label">Tecnologias (PT)</label>
                         <input class="form-control" name="tech" placeholder="Ex: React, MongoDB">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><span class="badge bg-secondary">EN</span> Technologies</label>
                         <input class="form-control" name="tech_en">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Tecnologías</label>
+                        <input class="form-control" name="tech_es">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">URL do Projeto</label>
@@ -703,13 +813,17 @@
                         <label class="form-label">URL Imagem (opcional)</label>
                         <input class="form-control" name="image_url">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">Descrição (PT)</label>
                         <textarea class="form-control" name="description" rows="3"></textarea>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label"><span class="badge bg-secondary">EN</span> Description</label>
                         <textarea class="form-control" name="description_en" rows="3"></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><span class="badge bg-warning text-dark">ES</span> Descripción</label>
+                        <textarea class="form-control" name="description_es" rows="3"></textarea>
                     </div>
                     <div class="col-md-3">
                         <div class="form-check pt-2">
@@ -757,13 +871,21 @@
                                     <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Title</label>
                                     <input class="form-control form-control-sm" name="title_en" value="{{ project.title_en or '' }}">
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-6">
+                                    <label class="form-label small mb-1"><span class="badge bg-warning text-dark">ES</span> Título</label>
+                                    <input class="form-control form-control-sm" name="title_es" value="{{ project.title_es or '' }}">
+                                </div>
+                                <div class="col-md-3">
                                     <label class="form-label small mb-1">Tecnologias (PT)</label>
                                     <input class="form-control form-control-sm" name="tech" value="{{ project.tech }}">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Tech</label>
                                     <input class="form-control form-control-sm" name="tech_en" value="{{ project.tech_en or '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1"><span class="badge bg-warning text-dark">ES</span> Tecnologías</label>
+                                    <input class="form-control form-control-sm" name="tech_es" value="{{ project.tech_es or '' }}">
                                 </div>
                                 <div class="col-md-3 d-flex align-items-end">
                                     <div class="form-check">
@@ -797,13 +919,17 @@
                                     <label class="form-label small mb-1">URL Imagem (opcional)</label>
                                     <input class="form-control form-control-sm" name="image_url" value="{% if project.image_url and not project.image_url.startswith('data:') %}{{ project.image_url }}{% endif %}">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label small mb-1">Descrição (PT)</label>
                                     <textarea class="form-control form-control-sm" name="description" rows="4">{{ project.description }}</textarea>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label small mb-1"><span class="badge bg-secondary">EN</span> Description</label>
                                     <textarea class="form-control form-control-sm" name="description_en" rows="4">{{ project.description_en or '' }}</textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small mb-1"><span class="badge bg-warning text-dark">ES</span> Descripción</label>
+                                    <textarea class="form-control form-control-sm" name="description_es" rows="4">{{ project.description_es or '' }}</textarea>
                                 </div>
                                 <div class="col-12 d-flex gap-2">
                                     <button class="btn btn-primary btn-sm px-4">Salvar</button>
@@ -956,10 +1082,13 @@
         document.addEventListener("DOMContentLoaded", function() {
             initQuill('editor-about', 'textarea-about');
             initQuill('editor-about-en', 'textarea-about-en');
+            initQuill('editor-about-es', 'textarea-about-es');
             initQuill('editor-emp-desc1', 'textarea-emp-desc1');
             initQuill('editor-emp-desc1-en', 'textarea-emp-desc1-en');
+            initQuill('editor-emp-desc1-es', 'textarea-emp-desc1-es');
             initQuill('editor-emp-desc2', 'textarea-emp-desc2');
             initQuill('editor-emp-desc2-en', 'textarea-emp-desc2-en');
+            initQuill('editor-emp-desc2-es', 'textarea-emp-desc2-es');
 
             // Handle forms that use quill
             const forms = ['form-about', 'form-emp'];
