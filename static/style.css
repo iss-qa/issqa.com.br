@@ -502,6 +502,21 @@ i.menu-mobile {
   right: 30px;
 }
 
+.footer-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.footer-brand-name {
+  font-weight: 700;
+  letter-spacing: 3px;
+  font-size: 14px;
+  color: #fff;
+}
+
 #footer{
   padding: 15px;
   color: #fff;

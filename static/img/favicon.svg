@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <style>
+    .ring { stroke: #021124; }
+    @media (prefers-color-scheme: dark) { .ring { stroke: #ffffff; } }
+  </style>
+  <circle class="ring" cx="28" cy="28" r="20" stroke-width="8"/>
+  <path d="M22 30 L34 42 L58 16" stroke="#149ddd" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
