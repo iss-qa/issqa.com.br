@@ -2,22 +2,28 @@
 import base64
 import os
 import re
+import smtplib
+import ssl
 from datetime import datetime, timedelta
+from email.message import EmailMessage
+from email.utils import formataddr
 
+import certifi
 import jwt
 from bson import ObjectId
 from dotenv import load_dotenv
 from flask import (
     Flask,
     flash,
+    jsonify,
     make_response,
     redirect,
     render_template,
     request,
     url_for,
 )
-from flask_mail import Mail, Message
 from markupsafe import Markup, escape
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
@@ -34,19 +40,32 @@ from db import (
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "dev")
+# Em produção o app roda atrás do Traefik (Easypanel): confia em 1 proxy para
+# IP real do visitante (rate limit do contato) e esquema https (cookie Secure).
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+app.secret_key = os.getenv("SECRET_KEY")
+if not app.secret_key:
+    app.secret_key = "dev"
+    print("AVISO: SECRET_KEY não definida — usando chave de desenvolvimento. Defina-a em produção.")
 
-mail_settings = {
-    "MAIL_SERVER": "smtp.gmail.com",
-    "MAIL_PORT": 465,
-    "MAIL_USE_TLS": False,
-    "MAIL_USE_SSL": True,
-    "MAIL_USERNAME": os.getenv("EMAIL"),
-    "MAIL_PASSWORD": os.getenv("SENHA"),
-}
+# Arquivos estáticos com cache de 7 dias; CSS/JS levam ?v=<mtime> (ver asset_url).
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 60 * 60 * 24 * 7
 
-app.config.update(mail_settings)
-mail = Mail(app)
+
+def _env_bool(name, default):
+    return os.getenv(name, str(default)).strip().lower() in ("1", "true", "yes", "on")
+
+
+# Gmail só aceita SMTP com "Senha de app" (16 letras, exige verificação em 2
+# etapas). A senha normal da conta é recusada com SMTPAuthenticationError.
+MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+MAIL_PORT = int(os.getenv("MAIL_PORT", "465"))
+MAIL_USE_SSL = _env_bool("MAIL_USE_SSL", MAIL_PORT == 465)
+MAIL_USERNAME = os.getenv("EMAIL", "").strip()
+MAIL_PASSWORD = os.getenv("SENHA", "").replace(" ", "")
+MAIL_TIMEOUT = 15
+
+DEFAULT_CONTACT_RECIPIENTS = "qa.eng.isaiasilva@gmail.com,isaiasilva.info@gmail.com"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
@@ -63,6 +82,29 @@ def nl2br(value):
 
 
 app.jinja_env.filters["nl2br"] = nl2br
+
+
+@app.context_processor
+def inject_asset_url():
+    def asset_url(filename):
+        """URL de /static com ?v=<mtime> para invalidar o cache a cada deploy."""
+        try:
+            version = int(os.path.getmtime(os.path.join(app.static_folder, filename)))
+        except OSError:
+            version = 0
+        return url_for("static", filename=filename, v=version)
+
+    return {"asset_url": asset_url}
+
+
+@app.after_request
+def security_headers(resp):
+    resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+    resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    resp.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    if request.is_secure:
+        resp.headers.setdefault("Strict-Transport-Security", "max-age=31536000")
+    return resp
 
 
 def create_token(username):
@@ -191,12 +233,15 @@ def init_app_data():
         "Acredito que a educação pode mudar a vida das pessoas e sou prova disso. "
         "Sou formado em Sistemas de Informação e tenho mais de 8 anos de experiência em testes de software."
     )
-    default_pass = os.getenv("ADMIN_PASS", "Is@i@s1989")
-    seed_admin(os.getenv("ADMIN_USER", "isaias"), generate_password_hash(default_pass))
-    seed_admin(
-        os.getenv("ADMIN_USER_EMAIL", "qa.eng.isaiasilva@gmail.com"),
-        generate_password_hash(os.getenv("ADMIN_EMAIL_PASS", default_pass)),
-    )
+    # Sem senha padrão no código (o repositório é público): o admin só é criado
+    # quando ADMIN_PASS está definida no ambiente.
+    default_pass = os.getenv("ADMIN_PASS")
+    if default_pass:
+        seed_admin(os.getenv("ADMIN_USER", "isaias"), generate_password_hash(default_pass))
+        seed_admin(
+            os.getenv("ADMIN_USER_EMAIL", "qa.eng.isaiasilva@gmail.com"),
+            generate_password_hash(os.getenv("ADMIN_EMAIL_PASS", default_pass)),
+        )
 
 
 try:
@@ -280,6 +325,7 @@ def index():
         experiences=experiences,
         education=education,
         projects=projects,
+        contact_messages=CONTACT_MESSAGES,
     )
 
 
@@ -293,7 +339,9 @@ def login():
         if user and check_password_hash(user["password_hash"], password):
             token = create_token(username)
             resp = make_response(redirect(url_for("admin")))
-            resp.set_cookie("auth_token", token, httponly=True, samesite="Lax")
+            resp.set_cookie(
+                "auth_token", token, httponly=True, samesite="Lax", secure=request.is_secure
+            )
             return resp
         flash("Usuário ou senha inválidos.")
     return render_template("login.html")
@@ -823,38 +871,127 @@ def admin_messages_delete(message_id):
     return redirect(url_for("admin"))
 
 
+# Chaves também usadas pelo i18n.js (data-i18n) para traduzir o retorno do formulário.
+CONTACT_MESSAGES = {
+    "contact-ok": "Mensagem enviada com sucesso! Responderei em breve.",
+    "contact-err-required": "Preencha nome, email e mensagem.",
+    "contact-err-email": "Informe um email válido.",
+    "contact-err-length": "Algum campo passou do tamanho máximo permitido.",
+    "contact-err-rate": "Muitas mensagens em pouco tempo. Tente novamente em alguns minutos.",
+    "contact-err-send": "Não foi possível enviar agora. Tente novamente ou fale pelo WhatsApp.",
+}
+CONTACT_MAX_LEN = {"nome": 100, "email": 254, "assunto": 150, "mensagem": 5000}
+CONTACT_RATE_LIMIT = 5
+CONTACT_RATE_WINDOW = timedelta(minutes=10)
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+def _single_line(value):
+    # Colapsa quebras de linha: nome/assunto viram cabeçalhos do e-mail.
+    return " ".join((value or "").split())
+
+
+def contact_recipients():
+    addrs = os.getenv("CONTACT_RECIPIENTS", DEFAULT_CONTACT_RECIPIENTS).split(",")
+    try:
+        addrs.append(get_setting("contact_email", ""))
+    except Exception as e:
+        print(f"Erro ao ler contact_email: {e}")
+    unique = []
+    for addr in addrs:
+        addr = addr.strip().lower()
+        if addr and _EMAIL_RE.match(addr) and addr not in unique:
+            unique.append(addr)
+    return unique
+
+
+def send_contact_email(name, email, subject, message_text):
+    if not MAIL_USERNAME or not MAIL_PASSWORD:
+        raise RuntimeError("Variáveis EMAIL/SENHA não configuradas.")
+
+    msg = EmailMessage()
+    msg["Subject"] = f"[issqa.com.br] {subject or f'Nova mensagem de {name}'}"
+    msg["From"] = formataddr(("Site issqa.com.br", MAIL_USERNAME))
+    msg["To"] = ", ".join(contact_recipients())
+    msg["Reply-To"] = formataddr((name, email))
+    msg.set_content(
+        f"Nome: {name}\nEmail: {email}\nAssunto: {subject or '-'}\n\n{message_text}\n\n"
+        "-- \nEnviado pelo formulário de contato de issqa.com.br. "
+        "Use \"Responder\" para falar direto com o visitante."
+    )
+
+    context = ssl.create_default_context(cafile=certifi.where())
+    if MAIL_USE_SSL:
+        smtp = smtplib.SMTP_SSL(MAIL_SERVER, MAIL_PORT, timeout=MAIL_TIMEOUT, context=context)
+    else:
+        smtp = smtplib.SMTP(MAIL_SERVER, MAIL_PORT, timeout=MAIL_TIMEOUT)
+        smtp.starttls(context=context)
+    with smtp:
+        smtp.login(MAIL_USERNAME, MAIL_PASSWORD)
+        smtp.send_message(msg)
+
+
 @app.route("/send", methods=["POST"])
 def send():
-    name = request.form.get("nome", "").strip()
-    email = request.form.get("email", "").strip()
-    subject = request.form.get("assunto", "").strip()
-    message_text = request.form.get("mensagem", "").strip()
+    wants_json = request.headers.get("X-Requested-With") == "fetch"
+
+    def reply(key, status=200):
+        ok = key == "contact-ok"
+        if wants_json:
+            return jsonify(ok=ok, key=key, message=CONTACT_MESSAGES[key]), status
+        flash(key, "success" if ok else "danger")
+        return redirect(url_for("index", _anchor="contato"))
+
+    # Honeypot: campo escondido que só robôs preenchem. Finge sucesso.
+    if request.form.get("website"):
+        return reply("contact-ok")
+
+    fields = {
+        "nome": _single_line(request.form.get("nome")),
+        "email": request.form.get("email", "").strip(),
+        "assunto": _single_line(request.form.get("assunto")),
+        "mensagem": request.form.get("mensagem", "").strip(),
+    }
+    name, email, subject, message_text = fields.values()
 
     if not name or not email or not message_text:
-        flash("Preencha todos os campos obrigatórios.")
-        return redirect(url_for("index"))
+        return reply("contact-err-required", 400)
+    if any(len(fields[k]) > limit for k, limit in CONTACT_MAX_LEN.items()):
+        return reply("contact-err-length", 400)
+    if not _EMAIL_RE.match(email):
+        return reply("contact-err-email", 400)
 
+    ip = request.remote_addr
     db = get_db()
-    db.messages.insert_one(
-        {
-            "name": name,
-            "email": email,
-            "subject": subject,
-            "message": message_text,
-            "created_at": datetime.utcnow(),
-        }
-    )
+    message_id = None
+    try:
+        since = datetime.utcnow() - CONTACT_RATE_WINDOW
+        if db.messages.count_documents({"ip": ip, "created_at": {"$gte": since}}) >= CONTACT_RATE_LIMIT:
+            return reply("contact-err-rate", 429)
+        message_id = db.messages.insert_one(
+            {
+                "name": name,
+                "email": email,
+                "subject": subject,
+                "message": message_text,
+                "ip": ip,
+                "email_sent": False,
+                "created_at": datetime.utcnow(),
+            }
+        ).inserted_id
+    except Exception as e:
+        print(f"Erro ao salvar mensagem de contato: {e}")
 
-    recipient = get_setting("contact_email", "qa.eng.isaiasilva@gmail.com")
-    msg = Message(
-        subject=subject or f"{name} enviou uma mensagem pelo site",
-        sender=app.config.get("MAIL_USERNAME"),
-        recipients=[recipient],
-        body=f"{name} ({email}) enviou:\n\n{message_text}",
-    )
-    mail.send(msg)
-    flash("Mensagem enviada com sucesso!")
-    return redirect(url_for("index"))
+    try:
+        send_contact_email(name, email, subject, message_text)
+    except Exception:
+        app.logger.exception("Falha ao enviar e-mail do formulário de contato")
+        # A mensagem salva continua visível em /admin; só falha se nada deu certo.
+        return reply("contact-ok") if message_id else reply("contact-err-send", 502)
+
+    if message_id:
+        db.messages.update_one({"_id": message_id}, {"$set": {"email_sent": True}})
+    return reply("contact-ok")
 
 
 if __name__ == "__main__":

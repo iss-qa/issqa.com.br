@@ -3,10 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="../static/style.css">
+    <meta name="theme-color" content="#021124">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset_url('style.css') }}">
     <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/img/favicon-16.png">
@@ -16,6 +19,7 @@
     <title>{{ settings.site_name or 'Isaias Silva' }} — {{ settings.site_title or 'QA Lead & Founder' }}</title>
     <meta name="description" content="{{ settings.site_title or 'QA Lead & Founder | Especialista em Automação e Estratégia de Qualidade' }}">
     <meta name="author" content="{{ settings.site_name or 'Isaias Silva' }}">
+    <link rel="canonical" href="{{ request.url_root }}">
 
     {% set _pi = settings.profile_image or '' %}
     {% if _pi.startswith('http') %}
@@ -44,7 +48,9 @@
 
 <body>
 
-    <i class="bi bi-list menu-mobile"></i>
+    <button type="button" class="menu-mobile" aria-label="Abrir menu" aria-controls="header" aria-expanded="false">
+        <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
 
     <!-- Seletor de idioma -->
     <div class="dropdown lang-switch">
@@ -59,20 +65,20 @@
 
     <aside id="header">
         <section class="profile">
-            <img src="{{ settings.profile_image }}" alt="Foto do Isaias">
+            <img src="{{ settings.profile_image }}" alt="Foto do Isaias" width="130" height="170" fetchpriority="high">
             <h1>{{ settings.site_name }}</h1>
             <div class="social-links mt-4 text-center">
-                <a target="_blank" href="https://www.linkedin.com/in/isaiasilva/">
-                    <i class="bi bi-linkedin"></i>
+                <a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/isaiasilva/" aria-label="LinkedIn">
+                    <i class="bi bi-linkedin" aria-hidden="true"></i>
                 </a>
-                <a target="_blank" href="https://github.com/isaiasilva">
-                    <i class="bi bi-github"></i>
+                <a target="_blank" rel="noopener noreferrer" href="https://github.com/isaiasilva" aria-label="GitHub">
+                    <i class="bi bi-github" aria-hidden="true"></i>
                 </a>
-                <a target="_blank" href="https://www.youtube.com/channel/UCFmpiYmSjv6hqw-G-SEsAPA">
-                    <i class="bi bi-youtube"></i>
+                <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCFmpiYmSjv6hqw-G-SEsAPA" aria-label="YouTube">
+                    <i class="bi bi-youtube" aria-hidden="true"></i>
                 </a>
-                <a target="_blank" href="https://www.instagram.com/isaiiasiilva/">
-                    <i class="bi bi-instagram"></i>
+                <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/isaiiasiilva/" aria-label="Instagram">
+                    <i class="bi bi-instagram" aria-hidden="true"></i>
                 </a>
             </div>
         </section>
@@ -138,7 +144,7 @@
             <div class="row mt-4">
                 <div class="col-md-4">
                     <img class="img-fluid shadow" src="{{ settings.profile_image }}" alt="Foto do Isaias"
-                        data-anime="left">
+                        loading="lazy" decoding="async" data-anime="left">
                 </div>
                 <div class="col-md-8" data-anime="right">
                     <h3 data-i18n-en="{{ settings.emp_title_en }}" data-i18n-es="{{ settings.emp_title_es }}">{{ settings.emp_title }}</h3>
@@ -169,10 +175,10 @@
                                 <li class="list-group-item"><span data-i18n="sobre-hobby">Hobby</span>: <span
                                         class="fw-lighter" data-i18n-en="{{ settings.emp_hobby_en }}" data-i18n-es="{{ settings.emp_hobby_es }}">{{ settings.emp_hobby }}</span></li>
                                 <li class="list-group-item">Site: <a href="{{ settings.emp_site_url }}"
-                                        target="_blank"
+                                        target="_blank" rel="noopener noreferrer"
                                         class="fw-lighter text-decoration-none link-dark">{{ settings.emp_site }}</a></li>
                                 <li class="list-group-item"><span data-i18n="sobre-trabalho">Trabalho</span>: <a
-                                        href="{{ settings.emp_trabalho_url }}" target="_blank"
+                                        href="{{ settings.emp_trabalho_url }}" target="_blank" rel="noopener noreferrer"
                                         class="fw-lighter text-decoration-none link-dark" data-i18n-en="{{ settings.emp_trabalho_en }}" data-i18n-es="{{ settings.emp_trabalho_es }}">{{ settings.emp_trabalho }}</a></li>
                                 <li class="list-group-item"><span data-i18n="sobre-xp">Experiência</span>: <span
                                         class="fw-lighter" data-i18n-en="{{ settings.emp_xp_en }}" data-i18n-es="{{ settings.emp_xp_es }}"> {{ settings.emp_xp }} </span></li>
@@ -317,7 +323,8 @@
                     <div class="col">
                         <div class="card h-100">
                             {% if project.image_url %}
-                                <img src="{{ project.image_url }}" class="card-img-top img-fluid w-100" alt="{{ project.title }}">
+                                <img src="{{ project.image_url }}" class="card-img-top img-fluid w-100" alt="{{ project.title }}"
+                                    loading="lazy" decoding="async">
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title" data-i18n-en="{{ project.title_en or '' }}" data-i18n-es="{{ project.title_es or '' }}">{{ project.title }}</h5>
@@ -325,10 +332,10 @@
                                 {% if project.tech %}<p class="text-muted" data-i18n-en="{{ project.tech_en or '' }}" data-i18n-es="{{ project.tech_es or '' }}">{{ project.tech }}</p>{% endif %}
                                 <div class="d-flex justify-content-center gap-2">
                                     {% if project.project_url %}
-                                        <a href="{{ project.project_url }}" target='_blank' class="btn btn-outline-primary"><i class="bi bi-link-45deg"></i></a>
+                                        <a href="{{ project.project_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary" aria-label="Abrir projeto {{ project.title }}"><i class="bi bi-link-45deg" aria-hidden="true"></i></a>
                                     {% endif %}
                                     {% if project.repo_url %}
-                                        <a href="{{ project.repo_url }}" target='_blank' class="btn btn-outline-dark"><i class="bi bi-github"></i></a>
+                                        <a href="{{ project.repo_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark" aria-label="Repositório de {{ project.title }} no GitHub"><i class="bi bi-github" aria-hidden="true"></i></a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -356,10 +363,10 @@
 
                             <div class="email">
                                 <h4><i class="bi bi-envelope"></i> Email:</h4>
-                                <p>{{ settings.contact_email }}</p>
+                                <p><a class="link-dark text-break" href="mailto:{{ settings.contact_email }}">{{ settings.contact_email }}</a></p>
                             </div>
 
-                            <iframe
+                            <iframe title="Mapa de Lauro de Freitas, BA"
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3889.2329809249877!2d-38.34796038564559!3d-12.892735061721933!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7161668e017bcd5%3A0xb9ef06a73a2a1915!2sR.%20Fernando%20S%C3%A3o%20Moreira%2C%20Lauro%20de%20Freitas%20-%20BA%2C%2042700-000!5e0!3m2!1spt-BR!2sbr!4v1680146235235!5m2!1spt-BR!2sbr"
                                 width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy"
                                 referrerpolicy="no-referrer-when-downgrade" class='w-100'></iframe>
@@ -369,49 +376,54 @@
                     <div class="col-md-7 mt-5 mt-md-0">
                         <div class="card p-5 h-100 shadow border-0" data-anime="left">
 
-                            <form class="row g-3" action='/send' method="POST">
+                            <form id="contact-form" class="row g-3" action="/send" method="POST">
                                 <div class="col-md-6">
                                     <label for="nome" class="form-label" data-i18n="contact-form-name">Nome:</label>
-                                    <input type="text" class="form-control" id="nome" name='nome'
-                                        data-i18n="contact-form-name-ph" placeholder='Digite seu nome' required>
+                                    <input type="text" class="form-control" id="nome" name="nome" maxlength="100"
+                                        autocomplete="name" data-i18n="contact-form-name-ph" placeholder="Digite seu nome" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="email" class="form-label" data-i18n="contact-form-email">Email:</label>
-                                    <input type="email" class="form-control" id="email" name='email'
-                                        data-i18n="contact-form-email-ph" placeholder='Digite seu email' required>
+                                    <input type="email" class="form-control" id="email" name="email" maxlength="254"
+                                        autocomplete="email" data-i18n="contact-form-email-ph" placeholder="Digite seu email" required>
                                 </div>
 
                                 <div class="col-12">
                                     <label for="assunto" class="form-label" data-i18n="contact-form-subject">Assunto:</label>
-                                    <input type="text" class="form-control" id="assunto" name="assunto"
+                                    <input type="text" class="form-control" id="assunto" name="assunto" maxlength="150"
                                         data-i18n="contact-form-subject-ph" placeholder="Digite o assunto">
                                 </div>
 
                                 <div class="col-12">
                                     <label for="mensagem" class="form-label"
                                         data-i18n="contact-form-msg">Mensagem:</label>
-                                    <textarea type="text" class="form-control" id="mensagem" name='mensagem' rows="10"
+                                    <textarea class="form-control" id="mensagem" name="mensagem" rows="10" maxlength="5000"
                                         data-i18n="contact-form-msg-ph" placeholder="Digite sua mensagem"
                                         required></textarea>
                                 </div>
 
+                                <!-- Honeypot anti-spam: invisível para pessoas, preenchido por robôs -->
+                                <div class="contact-hp" aria-hidden="true">
+                                    <label for="website">Website</label>
+                                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                                </div>
+
+                                <div id="contact-status" class="col-12" role="status" aria-live="polite"></div>
 
                                 <div class="col-12 d-flex justify-content-center mt-4 gap-2 flex-wrap">
-                                    <button id='btn-enviar' type="submit" class="btn btn-primary"
+                                    <button id="btn-enviar" type="submit" class="btn btn-primary"
                                         data-i18n="contact-form-btn">
                                         Enviar Mensagem
                                     </button>
 
-                                    <a class="btn btn-success" href="{{ settings.whatsapp }}" target="_blank">
-                                        <i class="bi bi-whatsapp"></i> WhatsApp
-                                    </a>
-
-                                    <button id='btn-enviar-loader' class="btn btn-primary" type="button" disabled>
-                                        <span class="spinner-border spinner-border-sm" role="status"
-                                            aria-hidden="true"></span>
+                                    <button id="btn-enviar-loader" class="btn btn-primary" type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                                         <span data-i18n="contact-form-loading">Enviando, aguarde!...</span>
                                     </button>
 
+                                    <a class="btn btn-success" href="{{ settings.whatsapp }}" target="_blank" rel="noopener noreferrer">
+                                        <i class="bi bi-whatsapp" aria-hidden="true"></i> WhatsApp
+                                    </a>
                                 </div>
                             </form>
                         </div>
@@ -421,21 +433,26 @@
 
         </section>
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <div id="alerta" class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill"></i> {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        {% set ok = category != 'danger' %}
+        <div id="alerta" class="alert alert-{{ 'success' if ok else 'danger' }} alert-dismissible fade show" role="alert"
+            data-autohide="{{ 'true' if ok else 'false' }}">
+            <i class="bi bi-{{ 'check-circle-fill' if ok else 'exclamation-triangle-fill' }}" aria-hidden="true"></i>
+            {% if message in contact_messages %}
+            <span data-i18n="{{ message }}">{{ contact_messages[message] }}</span>
+            {% else %}
+            {{ message }}
+            {% endif %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
         {% endfor %}
-        {% endif %}
         {% endwith %}
 
     </main>
 
-    <a class="whatsapp-float" href="{{ settings.whatsapp }}" target="_blank" aria-label="WhatsApp">
-        <i class="bi bi-whatsapp"></i>
+    <a class="whatsapp-float" href="{{ settings.whatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+        <i class="bi bi-whatsapp" aria-hidden="true"></i>
     </a>
 
     <footer id="footer">
@@ -450,9 +467,9 @@
         </div>
     </footer>
 
-    <script src="../static/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../static/i18n.js"></script>
-    <script src="../static/script.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset_url('i18n.js') }}"></script>
+    <script src="{{ asset_url('script.js') }}"></script>
 </body>
 
 </html>

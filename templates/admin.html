@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset_url('style.css') }}">
     <!-- Quill Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
@@ -969,7 +970,10 @@
                                     <small class="text-muted">{{ msg.email }}</small>
                                 </td>
                                 <td>{{ msg.subject }}</td>
-                                <td>{{ msg.created_at }}</td>
+                                <td>
+                                    {{ msg.created_at }}
+                                    {% if msg.email_sent is false %}<br><span class="badge text-bg-warning" title="Falha no SMTP — veja os logs do app">E-mail não enviado</span>{% endif %}
+                                </td>
                                 <td>
                                     <form method="POST" action="/admin/messages/{{ msg.id }}/delete" onsubmit="return confirm('Remover mensagem?')">
                                         <button class="btn btn-outline-danger btn-sm">Remover</button>

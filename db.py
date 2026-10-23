@@ -28,7 +28,15 @@ if "://" in MONGO_URI and "@" in MONGO_URI:
     except Exception as e:
         print(f"Erro ao tratar MONGO_URI: {e}")
 
-_client = MongoClient(MONGO_URI, tlsCAFile=ca, serverSelectionTimeoutMS=5000)
+# tlsCAFile liga TLS implicitamente; só aplica no Atlas (mongodb+srv) ou quando a
+# URI pede TLS, senão o Mongo local (mongodb://localhost) falha no handshake.
+_uri_lower = MONGO_URI.lower()
+_tls_opts = (
+    {"tlsCAFile": ca}
+    if _uri_lower.startswith("mongodb+srv://") or "tls=true" in _uri_lower or "ssl=true" in _uri_lower
+    else {}
+)
+_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, **_tls_opts)
 _db = _client[MONGO_DB]
 
 

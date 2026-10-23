@@ -169,7 +169,13 @@ const translations = {
         "contact-form-msg": "Mensagem:",
         "contact-form-msg-ph": "Digite sua mensagem",
         "contact-form-btn": "Enviar Mensagem",
-        "contact-form-loading": "Enviando, aguarde!..."
+        "contact-form-loading": "Enviando, aguarde!...",
+        "contact-ok": "Mensagem enviada com sucesso! Responderei em breve.",
+        "contact-err-required": "Preencha nome, email e mensagem.",
+        "contact-err-email": "Informe um email válido.",
+        "contact-err-length": "Algum campo passou do tamanho máximo permitido.",
+        "contact-err-rate": "Muitas mensagens em pouco tempo. Tente novamente em alguns minutos.",
+        "contact-err-send": "Não foi possível enviar agora. Tente novamente ou fale pelo WhatsApp."
     },
     en: {
         // Menu
@@ -340,7 +346,13 @@ const translations = {
         "contact-form-msg": "Message:",
         "contact-form-msg-ph": "Enter your message",
         "contact-form-btn": "Send Message",
-        "contact-form-loading": "Sending, please wait!..."
+        "contact-form-loading": "Sending, please wait!...",
+        "contact-ok": "Message sent successfully! I'll get back to you soon.",
+        "contact-err-required": "Please fill in name, email and message.",
+        "contact-err-email": "Please enter a valid email.",
+        "contact-err-length": "One of the fields is longer than allowed.",
+        "contact-err-rate": "Too many messages in a short time. Please try again in a few minutes.",
+        "contact-err-send": "Couldn't send right now. Please try again or reach me on WhatsApp."
     },
     es: {
         // Menú
@@ -395,7 +407,13 @@ const translations = {
         "contact-form-msg": "Mensaje:",
         "contact-form-msg-ph": "Escribe tu mensaje",
         "contact-form-btn": "Enviar Mensaje",
-        "contact-form-loading": "Enviando, ¡un momento!..."
+        "contact-form-loading": "Enviando, ¡un momento!...",
+        "contact-ok": "¡Mensaje enviado con éxito! Te responderé pronto.",
+        "contact-err-required": "Completa nombre, email y mensaje.",
+        "contact-err-email": "Ingresa un email válido.",
+        "contact-err-length": "Algún campo supera el tamaño máximo permitido.",
+        "contact-err-rate": "Demasiados mensajes en poco tiempo. Inténtalo de nuevo en unos minutos.",
+        "contact-err-send": "No fue posible enviar ahora. Inténtalo de nuevo o escríbeme por WhatsApp."
     }
 };
 
@@ -407,7 +425,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const LANG_LABEL = { pt: "🇧🇷 PT", en: "🇺🇸 EN", es: "🇪🇸 ES" };
     const HTML_LANG = { pt: "pt-br", en: "en", es: "es" };
 
-    let currentLang = localStorage.getItem("issqa-lang") || "pt";
+    let currentLang = "pt";
+    try { currentLang = localStorage.getItem("issqa-lang") || "pt"; } catch (e) { /* storage bloqueado */ }
     if (!SUPPORTED.includes(currentLang)) currentLang = "pt";
 
     // Busca a chave no idioma atual com fallback en -> pt
@@ -415,6 +434,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const dict = translations[lang] || {};
         return dict[key] || (translations.en || {})[key] || (translations.pt || {})[key] || null;
     };
+    // Usado pelo script.js para traduzir o retorno do formulário de contato
+    window.issqaT = (key) => t(currentLang, key);
 
     const applyTranslations = (lang) => {
         // Textos estáticos deste arquivo (data-i18n)
@@ -476,7 +497,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".lang-menu [data-lang]").forEach(item => {
         item.addEventListener("click", () => {
             currentLang = item.getAttribute("data-lang");
-            localStorage.setItem("issqa-lang", currentLang);
+            try { localStorage.setItem("issqa-lang", currentLang); } catch (e) { /* storage bloqueado */ }
             applyTranslations(currentLang);
         });
     });

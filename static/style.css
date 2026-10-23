@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
+/* Fonte Ubuntu carregada via <link> nos templates (evita @import bloqueante) */
 
 html,
 body {
@@ -208,8 +208,10 @@ section#inicio div#arraste a {
     color: #fff;
 }
 
-i.menu-mobile {
+.menu-mobile {
     position: fixed;
+    border: 0;
+    padding: 0;
     color: #fff;
     background-color: #252c90;
     right: 1rem;
@@ -237,7 +239,7 @@ i.menu-mobile {
     #header {
       left: -300px;
     }
-    i.menu-mobile{
+    .menu-mobile{
       display: flex;
     }
     /* No mobile o hambúrguer ocupa o canto direito: o seletor de idioma
@@ -495,6 +497,29 @@ i.menu-mobile {
   display: none;
 }
 
+/* Honeypot do formulário de contato: fora da tela, mas presente no DOM */
+.contact-hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Foco visível para navegação por teclado */
+a:focus-visible,
+button:focus-visible,
+.menu-mobile:focus-visible {
+  outline: 3px solid #149ddd;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-anime] {
+    transition: none;
+  }
+}
+
 #alerta {
   position: fixed;
   z-index: 10;
@@ -530,13 +555,7 @@ i.menu-mobile {
   transition: .3s;
 }
 
-@media (max-width: 1012px) {
-  #footer{
-    position: static;
-    width: auto;
-    padding: 20px 15px;
-  }
-}@media (max-width: 1012px) {
+@media (max-width: 1024px) {
   #footer{
     position: static;
     width: auto;

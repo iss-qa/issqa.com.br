@@ -20,17 +20,22 @@ cd portfolio-cv
 SECRET_KEY=troque-por-uma-chave-segura
 EMAIL=seu.email@gmail.com
 SENHA=senha-de-app-do-gmail
+# Destinatários do formulário de contato (vírgula). Padrão: os dois Gmails do Isaias
+CONTACT_RECIPIENTS=qa.eng.isaiasilva@gmail.com,isaiasilva.info@gmail.com
+# Opcionais: MAIL_SERVER (smtp.gmail.com), MAIL_PORT (465 SSL; use 587 para STARTTLS)
 # MongoDB local:
 MONGO_URI=mongodb://localhost:27017
 # Ou MongoDB Atlas (recomendado em produção):
 # MONGO_URI=mongodb+srv://<user>:<pass>@<cluster>/portfolio_cv?retryWrites=true&w=majority
 MONGO_DB=portfolio_cv
-# Opcionais — usados no seed do usuário admin inicial
+# Seed do usuário admin inicial (sem ADMIN_PASS nenhum admin é criado)
 ADMIN_USER=isaias
 ADMIN_PASS=troque-esta-senha
 ```
 
-> `EMAIL`/`SENHA` são usados pelo Flask-Mail (formulário de contato). Use uma **senha de app** do Gmail, não a senha da conta.
+> `EMAIL`/`SENHA` são usados no envio SMTP do formulário de contato. O Gmail **recusa a senha normal da conta**: ative a verificação em 2 etapas e gere uma **senha de app** (16 letras) em <https://myaccount.google.com/apppasswords>. Mesmo se o e-mail falhar, a mensagem fica salva em *Admin → Contato* (marcada como "E-mail não enviado").
+>
+> Modelo completo em `.env.example`. **Nunca versione o `.env`.**
 
 ### 3. Backend (Flask)
 ```bash
@@ -58,7 +63,7 @@ A aplicação sobe em `http://127.0.0.1:5000`.
 
 ### 4. Painel Administrativo
 1. Acesse `http://127.0.0.1:5000/login`.
-2. Usuário/senha iniciais vêm das variáveis `ADMIN_USER` / `ADMIN_PASS` (padrões no `app.py`).
+2. Usuário/senha iniciais vêm das variáveis `ADMIN_USER` / `ADMIN_PASS` (não há senha padrão no código).
 3. No painel você pode editar: Início, Sobre, Empreendedor, Habilidades, Experiências, Formação, Portfólio e Mensagens.
 4. Nas abas **Experiências** e **Formação**:
    - Arraste pelo ícone `☰` para reordenar (a ordem é persistida automaticamente).
@@ -84,7 +89,11 @@ Os testes ficam em `tests/` e usam Page Object Model.
 | `python3 scripts/create_user.py --username "email@..." --password "..."` | Cria usuário admin manualmente |
 | `python3 scripts/import_from_site.py --reset` | Importa skills/currículo/portfólio do site em produção |
 
-## Deploy (Vercel + MongoDB Atlas)
+## Deploy
+
+> Produção roda em **Docker no Easypanel** (VPS), usando o `Dockerfile`. Configure as variáveis do `.env.example` na aba *Ambiente* do serviço. Para não perder imagens enviadas pelo painel a cada deploy, monte um volume em `/app/static/uploads`.
+
+### Alternativa: Vercel + MongoDB Atlas
 1. Crie um cluster e um usuário no [MongoDB Atlas](https://www.mongodb.com/atlas).
 2. Em *Project Settings → Environment Variables* do Vercel, configure:
    - `SECRET_KEY`, `EMAIL`, `SENHA`
