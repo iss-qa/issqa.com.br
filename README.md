@@ -91,7 +91,7 @@ Os testes ficam em `tests/` e usam Page Object Model.
 
 ## Deploy
 
-> Produção roda em **Docker no Easypanel** (VPS), usando o `Dockerfile`. Configure as variáveis do `.env.example` na aba *Ambiente* do serviço. Para não perder imagens enviadas pelo painel a cada deploy, monte um volume em `/app/static/uploads`.
+> Produção roda em **Docker no Easypanel** (VPS), usando o `Dockerfile`. Configure as variáveis do `.env.example` na aba *Ambiente* do serviço. Imagens enviadas pelo painel ficam salvas no MongoDB (coleção `uploads`, servidas em `/media/<id>`), então sobrevivem a qualquer redeploy sem precisar de volume.
 
 ### Alternativa: Vercel + MongoDB Atlas
 1. Crie um cluster e um usuário no [MongoDB Atlas](https://www.mongodb.com/atlas).
@@ -101,4 +101,4 @@ Os testes ficam em `tests/` e usam Page Object Model.
    - `MONGO_DB=portfolio_cv`
 3. Faça deploy (o `vercel.json` já está configurado).
 
-> **Uploads em serverless:** o sistema de arquivos do Vercel é somente-leitura. Imagens enviadas pelo painel (foto de perfil, fundo, portfólio) caem automaticamente em *fallback* e são armazenadas como data URI (`base64`) na coleção `settings`/`projects` do Mongo — nenhum volume externo é necessário.
+> **Uploads:** imagens enviadas pelo painel (foto de perfil, fundo, portfólio) são gravadas no Mongo (coleção `uploads`), o que funciona igual em Docker e em serverless. Aceita PNG, JPG, WEBP e GIF até 8 MB (o tipo é validado pelos bytes do arquivo).

@@ -1,5 +1,4 @@
 # v1.0.1 - Redesign & i18n Fix
-import base64
 import os
 import re
 import smtplib
@@ -10,10 +9,12 @@ from email.utils import formataddr
 
 import certifi
 import jwt
-from bson import ObjectId
+from bson import Binary, ObjectId
+from bson.errors import InvalidId
 from dotenv import load_dotenv
 from flask import (
     Flask,
+    abort,
     flash,
     jsonify,
     make_response,
@@ -67,12 +68,27 @@ MAIL_TIMEOUT = 15
 
 DEFAULT_CONTACT_RECIPIENTS = "qa.eng.isaiasilva@gmail.com,isaiasilva.info@gmail.com"
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
-try:
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
-except Exception as e:
-    print(f"Erro ao criar diretório de uploads (comum em Vercel/Serverless): {e}")
+# Uploads do painel ficam no Mongo (coleção "uploads"), não em static/uploads:
+# o container do Easypanel é recriado a cada deploy e perderia os arquivos.
+MAX_UPLOAD_BYTES = 8 * 1024 * 1024
+# Tipo detectado pelos bytes, não pelo que o navegador declara. SVG fica de fora
+# porque pode carregar <script> servido do nosso domínio.
+_IMAGE_SIGNATURES = (
+    (b"\x89PNG\r\n\x1a\n", "image/png"),
+    (b"\xff\xd8\xff", "image/jpeg"),
+    (b"GIF87a", "image/gif"),
+    (b"GIF89a", "image/gif"),
+)
+
+# Prints enviados pelo painel em 23/10/2026, quando os uploads ainda iam para o
+# disco do container. Os arquivos foram versionados em static/img; isto só
+# reaponta as referências salvas no banco (idempotente, roda no boot).
+LEGACY_UPLOADS = {
+    "/static/uploads/Captura_de_Tela_2026-10-23_as_17.29.16.png": "/static/img/wastezeroai.png",
+    "/static/uploads/Captura_de_Tela_2026-10-23_as_17.30.53.png": "/static/img/juntix.png",
+    "/static/uploads/Captura_de_Tela_2026-10-23_as_17.31.40.png": "/static/img/cruzzo.png",
+    "/static/uploads/Captura_de_Tela_2026-10-23_as_17.33.41.png": "/static/img/pastoria.png",
+}
 
 
 def nl2br(value):
@@ -135,27 +151,45 @@ def login_required(view):
     return wrapped
 
 
+def _image_mimetype(data):
+    for signature, mime in _IMAGE_SIGNATURES:
+        if data.startswith(signature):
+            return mime
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    return None
+
+
 def save_upload(file_storage):
     if not file_storage or not file_storage.filename:
         return ""
-    filename = secure_filename(file_storage.filename)
-    if not filename:
+    data = file_storage.read(MAX_UPLOAD_BYTES + 1)
+    if not data:
         return ""
-    try:
-        path = os.path.join(UPLOAD_DIR, filename)
-        file_storage.save(path)
-        return f"/static/uploads/{filename}"
-    except OSError as e:
-        # Read-only filesystem (Vercel/serverless). Fall back to base64 data URI.
-        print(f"Filesystem write falhou ({e}); armazenando imagem como data URI.")
-        try:
-            file_storage.stream.seek(0)
-        except Exception:
-            pass
-        data = file_storage.read()
-        mime = file_storage.mimetype or "application/octet-stream"
-        b64 = base64.b64encode(data).decode("ascii")
-        return f"data:{mime};base64,{b64}"
+    if len(data) > MAX_UPLOAD_BYTES:
+        flash("Imagem maior que 8 MB — não foi salva.")
+        return ""
+    mime = _image_mimetype(data)
+    if not mime:
+        flash("Formato de imagem não suportado (use PNG, JPG, WEBP ou GIF).")
+        return ""
+    upload_id = get_db().uploads.insert_one(
+        {
+            "filename": secure_filename(file_storage.filename),
+            "mimetype": mime,
+            "size": len(data),
+            "data": Binary(data),
+            "created_at": datetime.utcnow(),
+        }
+    ).inserted_id
+    return url_for("media", upload_id=str(upload_id))
+
+
+def migrate_legacy_uploads():
+    db = get_db()
+    for old, new in LEGACY_UPLOADS.items():
+        db.projects.update_many({"image_url": old}, {"$set": {"image_url": new}})
+        db.settings.update_many({"value": old}, {"$set": {"value": new}})
 
 
 CONTRACT_TYPES = ["CLT", "PJ", "Contrato", "Freelancer", "Estágio", "Cooperado"]
@@ -205,6 +239,7 @@ def normalize_list(cursor):
 
 def init_app_data():
     init_db()
+    migrate_legacy_uploads()
     seed_settings(
         {
             "site_name": "Isaias Silva",
@@ -327,6 +362,22 @@ def index():
         projects=projects,
         contact_messages=CONTACT_MESSAGES,
     )
+
+
+@app.route("/media/<upload_id>")
+def media(upload_id):
+    try:
+        oid = ObjectId(upload_id)
+    except InvalidId:
+        abort(404)
+    doc = get_db().uploads.find_one({"_id": oid})
+    if not doc:
+        abort(404)
+    resp = make_response(bytes(doc["data"]))
+    resp.headers["Content-Type"] = doc["mimetype"]
+    # O id muda a cada upload, então o conteúdo de uma URL nunca muda.
+    resp.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    return resp
 
 
 @app.route("/login", methods=["GET", "POST"])
